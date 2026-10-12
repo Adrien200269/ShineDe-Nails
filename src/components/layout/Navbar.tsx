@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Sparkles, Menu, X, User, LogOut, LogIn } from "lucide-react";
+import { Sparkles, Menu, X, User, LogOut, LogIn, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { useAuth } from "@/lib/supabase/auth-context";
@@ -235,7 +235,9 @@ export function Navbar() {
               <span className="text-xs text-brand-primary font-bold tracking-widest uppercase">
                 @shine.denails
               </span>
-              <span className="text-[10px] text-gray-500 dark:text-gray-400">🇳🇵 Nepal</span>
+              <span className="inline-flex items-center gap-1 text-[10px] text-gray-500 dark:text-gray-400">
+                <MapPin className="w-3 h-3 text-brand-primary" /> Kathmandu, Nepal
+              </span>
             </div>
           </div>
         </div>

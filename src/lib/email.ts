@@ -49,13 +49,13 @@ export async function sendVerificationCodeEmail({
       <body>
         <div class="container">
           <div class="logo">ShineDe Nails</div>
-          <div class="tagline">PRESS. SLAY. REPEAT.</div>
+          <div class="tagline">Bespoke Handcrafted Studio · Kathmandu, Nepal</div>
           
           <div class="divider"></div>
           
-          <div class="title">Verify Your Gmail Address ✨</div>
+          <div class="title">Verify Your Gmail Address</div>
           <div class="text">
-            Hi <strong>${recipientName}</strong>! Use the verification code below to confirm your account and access your handcrafted press-on orders.
+            Hi <strong>${recipientName}</strong>, use the verification code below to confirm your account and access your handcrafted press-on orders.
           </div>
           
           <div class="otp-card">
@@ -70,8 +70,8 @@ export async function sendVerificationCodeEmail({
           <div class="divider"></div>
           
           <div class="footer">
-            Handcrafted with love in Kathmandu, Nepal 🇳🇵<br>
-            Follow our latest drops: <a href="https://instagram.com/shine.denails" class="social">@shine.denails</a>
+            Handcrafted with precision in Kathmandu, Nepal<br>
+            Follow our latest designs: <a href="https://instagram.com/shine.denails" class="social">@shine.denails</a>
           </div>
         </div>
       </body>
@@ -81,7 +81,7 @@ export async function sendVerificationCodeEmail({
   return mailTransporter.sendMail({
     from: `"ShineDe Nails" <${gmailUser}>`,
     to,
-    subject: `${code} is your ShineDe Nails Verification Code ✨`,
+    subject: `${code} is your ShineDe Nails Verification Code`,
     html,
   });
 }
@@ -141,10 +141,10 @@ export async function sendOrderConfirmationEmail({
         <div class="container">
           <div class="header">
             <div class="logo">ShineDe Nails</div>
-            <div class="tagline">PRESS. SLAY. REPEAT.</div>
+            <div class="tagline">Bespoke Handcrafted Studio · Kathmandu, Nepal</div>
             <div class="badge">Order Confirmed</div>
-            <div class="title">You&apos;re About to Slay! ✨</div>
-            <div class="subtitle">Thank you <strong>${customerName}</strong>! Our nail artists in Nepal have received your custom order.</div>
+            <div class="title">Your Order Has Been Confirmed</div>
+            <div class="subtitle">Thank you <strong>${customerName}</strong>. Our nail studio in Nepal has received your custom order.</div>
           </div>
           
           ${imageUrl ? `<img src="${imageUrl}" class="img-preview" alt="Design Preview" />` : ""}
@@ -173,13 +173,13 @@ export async function sendOrderConfirmationEmail({
           </div>
           
           <div class="timeline">
-            <div class="timeline-step">💅 <strong>1. Gel & Charm Matching:</strong> Our artist is preparing the custom pigments & stones.</div>
-            <div class="timeline-step">📏 <strong>2. Handcrafting:</strong> Formed to your exact nail bed dimensions.</div>
-            <div class="timeline-step">📦 <strong>3. Dispatch:</strong> Cured, packaged in our signature box with application kit, and shipped across Nepal.</div>
+            <div class="timeline-step"><strong>1. Material Preparation:</strong> Selecting custom salon gels and handcrafted accents.</div>
+            <div class="timeline-step"><strong>2. Handcrafting & Curing:</strong> Sculpted precisely to your nail measurements.</div>
+            <div class="timeline-step"><strong>3. Inspection & Dispatch:</strong> Hand-finished, boxed with complimentary prep kit, and dispatched.</div>
           </div>
           
           <div class="footer">
-            ShineDe Nails Nepal 🇳🇵 · Contact: <a href="mailto:${gmailUser}" style="color: #E93F66;">${gmailUser}</a><br>
+            ShineDe Nails · Kathmandu, Nepal · Contact: <a href="mailto:${gmailUser}" style="color: #E93F66;">${gmailUser}</a><br>
             Instagram: <a href="https://instagram.com/shine.denails" style="color: #E93F66; font-weight: 700;">@shine.denails</a>
           </div>
         </div>
@@ -191,7 +191,7 @@ export async function sendOrderConfirmationEmail({
     from: `"ShineDe Nails Orders" <${gmailUser}>`,
     to,
     cc: gmailUser, // Also notifies the store owner shresthasabja0@gmail.com
-    subject: `Order Confirmed: ${orderNumber} - ShineDe Nails ✨`,
+    subject: `Order Confirmed: ${orderNumber} - ShineDe Nails`,
     html,
   });
 }

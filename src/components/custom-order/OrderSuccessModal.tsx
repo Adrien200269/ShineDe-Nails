@@ -47,7 +47,7 @@ export function OrderSuccessModal({ isOpen, order, onClose }: OrderSuccessModalP
       </span>
 
       <h2 className="text-2xl sm:text-3xl font-serif font-bold text-gray-900 dark:text-white">
-        You&apos;re About to Slay! ✨
+        Your Order Is Confirmed
       </h2>
 
       <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mt-2">
@@ -94,6 +94,7 @@ export function OrderSuccessModal({ isOpen, order, onClose }: OrderSuccessModalP
             sizingType: order.sizing_type,
             standardSize: order.size_data?.standardSize,
             measurements: order.size_data?.measurements,
+            coinPhotoUrl: order.size_data?.coinPhotoUrl,
             imageUrl: order.image_url,
             totalPrice: Number(order.total_price),
             customerName: order.customer_name,

@@ -13,6 +13,7 @@ import {
   Ruler,
   FileText,
   CreditCard,
+  Lock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Step1Upload } from "./Step1Upload";
@@ -21,6 +22,8 @@ import { Step3Sizing } from "./Step3Sizing";
 import { Step4OrderDetails } from "./Step4OrderDetails";
 import { Step5ReviewCheckout } from "./Step5ReviewCheckout";
 import { OrderSuccessModal } from "./OrderSuccessModal";
+import { AuthModal } from "@/components/auth/AuthModal";
+import { useAuth } from "@/lib/supabase/auth-context";
 import {
   NailShape,
   NailLength,
@@ -42,6 +45,7 @@ const STEPS = [
 ];
 
 export function OrderWizard() {
+  const { user } = useAuth();
   const [currentStep, setCurrentStep] = React.useState(1);
   const [direction, setDirection] = React.useState(1);
 
@@ -59,12 +63,25 @@ export function OrderWizard() {
     ring: 11,
     pinky: 9,
   });
+  const [coinPhotoUrl, setCoinPhotoUrl] = React.useState<string>("");
   const [notes, setNotes] = React.useState<string>("");
   const [customerName, setCustomerName] = React.useState<string>("");
   const [customerEmail, setCustomerEmail] = React.useState<string>("");
   const [customerPhone, setCustomerPhone] = React.useState<string>("");
 
   const searchParams = useSearchParams();
+
+  // Pre-fill user contact info if logged in
+  React.useEffect(() => {
+    if (user) {
+      if (user.fullName && !customerName) {
+        setCustomerName(user.fullName);
+      }
+      if (user.email && !customerEmail) {
+        setCustomerEmail(user.email);
+      }
+    }
+  }, [user]);
 
   // Pre-fill specs from Quiz if available
   React.useEffect(() => {
@@ -89,13 +106,14 @@ export function OrderWizard() {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [createdOrder, setCreatedOrder] = React.useState<CustomOrder | null>(null);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = React.useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = React.useState(false);
 
-  // Price Calculation in Nepalese Rupees (NPR)
+  // Price Calculation in Nepalese Rupees (NPR) - Base price is 700
   const calculateTotal = React.useMemo(() => {
-    let base = 1499;
-    if (length === "medium") base += 150;
-    if (length === "long") base += 300;
-    if (length === "extra_long") base += 450;
+    let base = 700;
+    if (length === "medium") base += 100;
+    if (length === "long") base += 200;
+    if (length === "extra_long") base += 300;
     return base;
   }, [length]);
 
@@ -107,6 +125,13 @@ export function OrderWizard() {
       if (!imageUrl) {
         errors.image = "Please upload an inspiration photo to continue.";
         setStepErrors(errors);
+        return false;
+      }
+    }
+
+    if (step === 3) {
+      if (sizingType === "coin_photo" && !coinPhotoUrl) {
+        alert("Please upload a photo of your hand with a coin, or select Standard or Custom mm sizing.");
         return false;
       }
     }
@@ -142,6 +167,11 @@ export function OrderWizard() {
   };
 
   const handleSubmitOrder = async (discountedPrice?: number, promoCodeUsed?: string) => {
+    if (!user) {
+      setIsAuthModalOpen(true);
+      return;
+    }
+
     if (!validateStep(4)) {
       setCurrentStep(4);
       return;
@@ -157,6 +187,7 @@ export function OrderWizard() {
 
       const newOrder = await submitCustomOrder({
         order_number: generateOrderNumber(),
+        user_id: user.id,
         customer_name: customerName,
         customer_email: customerEmail,
         customer_phone: customerPhone,
@@ -168,6 +199,8 @@ export function OrderWizard() {
         size_data:
           sizingType === "standard"
             ? { type: "standard", standardSize }
+            : sizingType === "coin_photo"
+            ? { type: "coin_photo", coinPhotoUrl }
             : { type: "custom", measurements },
         notes: orderNotes,
         status: "Pending",
@@ -179,7 +212,7 @@ export function OrderWizard() {
       setIsSuccessModalOpen(true);
     } catch (err) {
       console.error("Order submission failed:", err);
-      alert("Failed to submit custom order. Please try again.");
+      alert(err instanceof Error ? err.message : "Failed to submit custom order. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -315,9 +348,11 @@ export function OrderWizard() {
                 sizingType={sizingType}
                 standardSize={standardSize}
                 measurements={measurements}
+                coinPhotoUrl={coinPhotoUrl}
                 onSizingTypeChange={setSizingType}
                 onStandardSizeChange={setStandardSize}
                 onMeasurementsChange={setMeasurements}
+                onCoinPhotoUrlChange={setCoinPhotoUrl}
               />
             )}
 
@@ -328,6 +363,8 @@ export function OrderWizard() {
                 customerName={customerName}
                 customerEmail={customerEmail}
                 customerPhone={customerPhone}
+                user={user}
+                onOpenAuthModal={() => setIsAuthModalOpen(true)}
                 onFinishChange={setFinish}
                 onNotesChange={setNotes}
                 onCustomerNameChange={setCustomerName}
@@ -346,11 +383,14 @@ export function OrderWizard() {
                 sizingType={sizingType}
                 standardSize={standardSize}
                 measurements={measurements}
+                coinPhotoUrl={coinPhotoUrl}
                 notes={notes}
                 customerName={customerName}
                 customerEmail={customerEmail}
                 totalPrice={calculateTotal}
                 isSubmitting={isSubmitting}
+                user={user}
+                onRequireLogin={() => setIsAuthModalOpen(true)}
                 onSubmitOrder={handleSubmitOrder}
               />
             )}
@@ -412,7 +452,7 @@ export function OrderWizard() {
             <span>Next: {STEPS[currentStep].label}</span>
             <ArrowRight className="h-4 w-4" />
           </Button>
-        ) : (
+        ) : user ? (
           <Button
             type="button"
             onClick={() => handleSubmitOrder()}
@@ -422,8 +462,25 @@ export function OrderWizard() {
             <span>Place Order ({formatCurrency(calculateTotal)})</span>
             <Sparkles className="h-4 w-4" />
           </Button>
+        ) : (
+          <Button
+            type="button"
+            onClick={() => setIsAuthModalOpen(true)}
+            className="flex-1 h-12 text-sm justify-center gap-2 shadow-pink-md bg-gradient-to-r from-brand-primary to-pink-600"
+          >
+            <Lock className="h-4 w-4" />
+            <span>Log In to Place Order</span>
+          </Button>
         )}
       </div>
+
+      {/* Auth Modal for inline login/signup */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        title="Sign In to Finalize Order"
+        description="Please log in to link your custom set to your profile and track production."
+      />
 
       {/* Success Celebration Modal */}
       <OrderSuccessModal

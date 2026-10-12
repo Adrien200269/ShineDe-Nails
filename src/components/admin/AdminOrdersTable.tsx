@@ -19,6 +19,8 @@ import {
   Download,
   FileSpreadsheet,
   Printer,
+  Camera,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PrintableWorkcardModal } from "./PrintableWorkcardModal";
@@ -95,7 +97,9 @@ export function AdminOrdersTable({
 
     const rows = filteredOrders.map((order) => {
       let sizeDetails = "";
-      if (order.size_data?.type === "custom" && order.size_data.measurements) {
+      if (order.size_data?.type === "coin_photo" || order.sizing_type === "coin_photo") {
+        sizeDetails = `Coin Photo (${order.size_data?.coinPhotoUrl ? "Attached" : "WhatsApp"})`;
+      } else if (order.size_data?.type === "custom" && order.size_data.measurements) {
         const m = order.size_data.measurements;
         sizeDetails = `T:${m.thumb}mm I:${m.index}mm M:${m.middle}mm R:${m.ring}mm P:${m.pinky}mm`;
       } else {
@@ -285,7 +289,12 @@ export function AdminOrdersTable({
 
                       {/* Sizing Fit */}
                       <td className="py-3.5 px-4">
-                        {isCustom ? (
+                        {order.sizing_type === "coin_photo" || order.size_data?.coinPhotoUrl ? (
+                          <span className="inline-flex items-center gap-1.5 bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 text-xs font-bold px-2 py-0.5 rounded-md">
+                            <Camera className="w-3.5 h-3.5" />
+                            <span>Coin Photo</span>
+                          </span>
+                        ) : isCustom ? (
                           <div className="text-[11px] font-mono text-brand-primary font-bold">
                             T:{size.measurements?.thumb} I:{size.measurements?.index} M:{size.measurements?.middle} R:{size.measurements?.ring} P:{size.measurements?.pinky}mm
                           </div>
@@ -384,9 +393,10 @@ export function AdminOrdersTable({
               <button
                 type="button"
                 onClick={() => setSelectedOrder(null)}
-                className="text-gray-400 hover:text-gray-600 text-sm font-bold p-1"
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-white p-1 rounded-full transition-colors"
+                aria-label="Close modal"
               >
-                ✕
+                <X className="w-5 h-5" />
               </button>
             </div>
 
@@ -439,7 +449,34 @@ export function AdminOrdersTable({
                 <span className="font-bold capitalize">{selectedOrder.finish || "Glossy"}</span>
               </div>
 
-              {selectedOrder.size_data?.type === "custom" && selectedOrder.size_data.measurements ? (
+              {selectedOrder.size_data?.type === "coin_photo" || selectedOrder.sizing_type === "coin_photo" || selectedOrder.size_data?.coinPhotoUrl ? (
+                <div className="pt-2 space-y-2">
+                  <span className="text-gray-500 font-semibold uppercase block text-[11px]">
+                    Client Hand &amp; Coin Calibration Photo:
+                  </span>
+                  {selectedOrder.size_data?.coinPhotoUrl ? (
+                    <div className="relative aspect-video rounded-2xl overflow-hidden border border-pink-200 dark:border-brand-dark-border bg-pink-50">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={selectedOrder.size_data.coinPhotoUrl}
+                        alt="Hand and coin for scale"
+                        className="w-full h-full object-cover"
+                      />
+                      <a
+                        href={selectedOrder.size_data.coinPhotoUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="absolute bottom-2 right-2 flex items-center gap-1 bg-black/70 text-white text-[11px] font-bold px-2.5 py-1 rounded-full backdrop-blur-sm hover:bg-black"
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                        <span>Open High-Res Coin Photo</span>
+                      </a>
+                    </div>
+                  ) : (
+                    <p className="text-xs text-amber-600">Client chose coin photo (sent via WhatsApp / chat)</p>
+                  )}
+                </div>
+              ) : selectedOrder.size_data?.type === "custom" && selectedOrder.size_data.measurements ? (
                 <div className="pt-2">
                   <span className="text-gray-500 font-semibold uppercase block mb-1.5">
                     Exact Millimeter Sizes:

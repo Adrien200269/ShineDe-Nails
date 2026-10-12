@@ -1,25 +1,35 @@
 "use client";
 
 import * as React from "react";
-import { Sparkles, Check, Wand2, Paintbrush, Heart, Gem, Eye, Flame } from "lucide-react";
+import {
+  Sparkles,
+  Paintbrush,
+  Gem,
+  Eye,
+  Brush,
+  Palette,
+  Sun,
+  Star,
+  CircleDot,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export interface FingerAccent {
-  finger: "thumb" | "index" | "middle" | "ring" | "pinky";
-  label: string;
-  accent: string;
-  icon: string;
+export interface AccentOptionItem {
+  id: string;
+  name: string;
+  Icon: React.ElementType;
+  desc: string;
 }
 
-export const ACCENT_OPTIONS = [
-  { id: "base", name: "Base Color Only", icon: "✨", desc: "Solid matching base gel" },
-  { id: "french", name: "French Tip", icon: "🤍", desc: "Crisp classic or colored smile line" },
-  { id: "chrome", name: "Chrome Powder", icon: "🪞", desc: "Mirror silver/gold glazed sheen" },
-  { id: "cateye", name: "Velvet Cat-Eye", icon: "🔮", desc: "Magnetic shimmering velvet light" },
-  { id: "charm_heart", name: "3D Heart Charm", icon: "💖", desc: "Raised acrylic heart or bow jewel" },
-  { id: "rhinestone", name: "Rhinestone Gem", icon: "💎", desc: "Sparkling crystal cluster accents" },
-  { id: "aura", name: "Aura Gradient", icon: "🌸", desc: "Airbrushed center glow bloom" },
-  { id: "foil", name: "Gold / Silver Foil", icon: "✨", desc: "Delicate metallic leaf flakes" },
+export const ACCENT_OPTIONS: AccentOptionItem[] = [
+  { id: "base", name: "Base Color Only", Icon: Palette, desc: "Solid matching base gel" },
+  { id: "french", name: "French Tip", Icon: Brush, desc: "Crisp classic or colored smile line" },
+  { id: "chrome", name: "Chrome Powder", Icon: Sun, desc: "Mirror metallic glazed sheen" },
+  { id: "cateye", name: "Velvet Cat-Eye", Icon: Eye, desc: "Magnetic shimmering velvet light" },
+  { id: "3d_art", name: "3D Art", Icon: Paintbrush, desc: "Sculpted gel lines, drops or textures" },
+  { id: "rhinestone", name: "Rhinestone Gem", Icon: Gem, desc: "Sparkling crystal cluster accents" },
+  { id: "aura", name: "Aura Gradient", Icon: CircleDot, desc: "Airbrushed center glow bloom" },
+  { id: "gold_silver_art", name: "Gold / Silver Art", Icon: Star, desc: "Delicate metallic leaf and line art" },
 ];
 
 interface MixAndMatchStudioProps {
@@ -37,7 +47,7 @@ export function MixAndMatchStudio({
     thumb: "base",
     index: "base",
     middle: "base",
-    ring: "charm_heart",
+    ring: "3d_art",
     pinky: "base",
   });
 
@@ -79,14 +89,15 @@ export function MixAndMatchStudio({
     <div className="rounded-3xl border border-pink-200 dark:border-brand-dark-border bg-white dark:bg-brand-dark-card p-5 sm:p-6 shadow-sm space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-pink-100 dark:border-brand-dark-border">
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-brand-primary bg-brand-primary-light dark:bg-brand-primary/20 px-2.5 py-0.5 rounded-full inline-block mb-1">
-            ✨ Interactive Feature
+          <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-brand-primary bg-brand-primary-light dark:bg-brand-primary/20 px-2.5 py-0.5 rounded-full mb-1">
+            <Sparkles className="w-3 h-3" />
+            <span>Studio Customizer</span>
           </span>
           <h3 className="font-serif text-lg font-bold text-gray-900 dark:text-white">
-            &ldquo;Mix &amp; Match&rdquo; Accent Nail Studio
+            Accent Nail Customizer
           </h3>
           <p className="text-xs text-gray-500 dark:text-brand-dark-muted">
-            Tap any finger below to assign custom nail charms, chrome powder, or French tips individually.
+            Tap any finger below to assign custom 3D art, chrome powder, or French tips individually.
           </p>
         </div>
 
@@ -102,6 +113,7 @@ export function MixAndMatchStudio({
             const isSelected = selectedFinger === f.id;
             const accent = getAccentInfo(accents[f.id]);
             const hasAccent = accents[f.id] !== "base";
+            const AccentIcon = accent.Icon;
 
             return (
               <button
@@ -117,12 +129,12 @@ export function MixAndMatchStudio({
                     isSelected
                       ? "bg-brand-primary text-white scale-110 shadow-pink-sm ring-2 ring-brand-primary/30"
                       : hasAccent
-                      ? "bg-pink-200 dark:bg-brand-primary/30 text-gray-800 dark:text-white"
+                      ? "bg-pink-200 dark:bg-brand-primary/30 text-brand-primary dark:text-white"
                       : "bg-white dark:bg-brand-dark-card text-gray-400 border border-pink-200 dark:border-brand-dark-border"
                   )}
                   title={`${f.label}: ${accent.name}`}
                 >
-                  <span>{accent.icon}</span>
+                  <AccentIcon className="w-3.5 h-3.5" />
                 </div>
 
                 {/* Finger silhouette shape */}
@@ -179,6 +191,7 @@ export function MixAndMatchStudio({
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {ACCENT_OPTIONS.map((opt) => {
             const isCurrent = accents[selectedFinger] === opt.id;
+            const OptionIcon = opt.Icon;
 
             return (
               <button
@@ -192,7 +205,16 @@ export function MixAndMatchStudio({
                     : "border-pink-200 dark:border-brand-dark-border bg-white dark:bg-brand-dark-surface hover:border-pink-300 text-gray-700 dark:text-brand-dark-text"
                 )}
               >
-                <span className="text-lg shrink-0 mt-0.5">{opt.icon}</span>
+                <div
+                  className={cn(
+                    "flex h-8 w-8 items-center justify-center rounded-xl shrink-0 transition-colors",
+                    isCurrent
+                      ? "bg-brand-primary text-white"
+                      : "bg-pink-100/70 dark:bg-brand-dark-card text-brand-primary"
+                  )}
+                >
+                  <OptionIcon className="w-4 h-4" />
+                </div>
                 <div className="min-w-0">
                   <span className="text-xs font-bold block truncate">{opt.name}</span>
                   <span className="text-[10px] text-gray-400 dark:text-brand-dark-muted line-clamp-1">

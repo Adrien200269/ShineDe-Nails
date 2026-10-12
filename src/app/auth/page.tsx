@@ -146,7 +146,7 @@ export default function AuthPage() {
       if (error) {
         setErrorMsg(error);
       } else {
-        setSuccessMsg("Verification successful! Welcome to ShineDe Nails ✨");
+        setSuccessMsg("Verification successful! Welcome to ShineDe Nails.");
         setTimeout(() => router.push("/dashboard"), 1000);
       }
     } catch (err: unknown) {
@@ -194,7 +194,7 @@ export default function AuthPage() {
                 : "Join ShineDe Nails"}
             </h1>
             <p className="text-xs text-brand-primary font-bold uppercase tracking-widest mt-1">
-              PRESS. SLAY. REPEAT. · 🇳🇵 NEPAL
+              Handcrafted Press-On Studio · Kathmandu
             </p>
           </div>
 
@@ -379,7 +379,7 @@ export default function AuthPage() {
                     className="w-full h-12 shadow-pink-md gap-2"
                   >
                     <KeyRound className="h-4 w-4" />
-                    <span>Verify Code & Sign In ✨</span>
+                    <span>Verify Code & Sign In</span>
                   </Button>
 
                   <div className="text-center pt-1">

@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CustomOrder, NailMeasurements, StandardSize, SizeData } from "@/types";
+import { CustomOrder, NailMeasurements, StandardSize, SizeData, SizingType } from "@/types";
 import {
   fetchUserOrders,
   getSavedMeasurements,
@@ -43,7 +43,7 @@ export default function DashboardPage() {
     pinky: 9,
   });
   const [standardSize, setStandardSize] = React.useState<StandardSize>("M");
-  const [sizingType, setSizingType] = React.useState<"custom" | "standard">("custom");
+  const [sizingType, setSizingType] = React.useState<SizingType>("custom");
   const [isSavedNotice, setIsSavedNotice] = React.useState(false);
   const [isMeasureModalOpen, setIsMeasureModalOpen] = React.useState(false);
   const [chatOrder, setChatOrder] = React.useState<CustomOrder | null>(null);
@@ -187,7 +187,7 @@ export default function DashboardPage() {
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-brand-primary bg-brand-primary-light dark:bg-brand-primary/20 px-2.5 py-0.5 rounded-full">
-                  ShineDe VIP Member · Nepal 🇳🇵
+                  Client Profile · Kathmandu, Nepal
                 </span>
               </div>
               <h1 className="font-serif text-2xl font-bold text-gray-900 dark:text-white mt-1">
@@ -293,7 +293,9 @@ export default function DashboardPage() {
                         <span>•</span>
                         <span>
                           {order.sizing_type === "standard"
-                            ? `Size ${order.size_data.standardSize}`
+                            ? `Size ${order.size_data?.standardSize || "M"}`
+                            : order.sizing_type === "coin_photo"
+                            ? "Hand & Coin Photo"
                             : "Custom mm Fit"}
                         </span>
                         <span>•</span>

@@ -11,6 +11,8 @@ export interface ChatMessage {
   senderName: string;
   message: string;
   imageUrl?: string;
+  audioUrl?: string;
+  audioDuration?: number;
   createdAt: string;
 }
 
@@ -35,7 +37,7 @@ let inMemoryMessages: ChatMessage[] = [
     customerName: "Aastha Sharma",
     senderRole: "admin",
     senderName: "ShineDe Artist (Sabja)",
-    message: "Hello Aastha! Absolutely 💕 We'll use our high-shine diamond top coat for the ring finger. Your 16mm thumb sizing is noted!",
+    message: "Hello Aastha! Absolutely. We will use our high-shine diamond top coat for the ring finger. Your 16mm thumb sizing is noted.",
     createdAt: new Date(Date.now() - 3600000 * 4).toISOString(),
   },
 ];

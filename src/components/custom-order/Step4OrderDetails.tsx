@@ -1,10 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { Sparkles, MessageSquare, Paintbrush, User } from "lucide-react";
+import { Sparkles, MessageSquare, Paintbrush, User, Lock, CheckCircle2, Check } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { NailFinish } from "@/types";
+import { Button } from "@/components/ui/button";
+import { NailFinish, UserSession } from "@/types";
 import { cn } from "@/lib/utils";
 import { MixAndMatchStudio } from "./MixAndMatchStudio";
 
@@ -14,6 +15,8 @@ interface Step4OrderDetailsProps {
   customerName: string;
   customerEmail: string;
   customerPhone: string;
+  user?: UserSession | null;
+  onOpenAuthModal?: () => void;
   onFinishChange: (finish: NailFinish) => void;
   onNotesChange: (notes: string) => void;
   onCustomerNameChange: (name: string) => void;
@@ -31,6 +34,8 @@ export function Step4OrderDetails({
   customerName,
   customerEmail,
   customerPhone,
+  user,
+  onOpenAuthModal,
   onFinishChange,
   onNotesChange,
   onCustomerNameChange,
@@ -156,6 +161,43 @@ export function Step4OrderDetails({
             We will send order confirmation, design mockups, and tracking to this address.
           </p>
         </div>
+
+        {/* Authentication Status Callout */}
+        {user ? (
+          <div className="flex items-center justify-between p-3 rounded-2xl bg-pink-50/70 dark:bg-brand-primary/10 border border-pink-200 dark:border-brand-dark-border text-xs">
+            <div className="flex items-center gap-2">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-white shrink-0">
+                <Check className="w-3 h-3 stroke-[2.5]" />
+              </span>
+              <span className="text-gray-700 dark:text-brand-dark-text">
+                Linked to account: <strong className="text-brand-primary">{user.email}</strong>
+              </span>
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">
+              Logged In
+            </span>
+          </div>
+        ) : (
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-2xl bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 text-xs">
+            <div className="flex items-center gap-2 text-amber-900 dark:text-amber-200">
+              <Lock className="w-4 h-4 shrink-0 text-amber-600" />
+              <span>
+                <strong>Login Required to Order:</strong> You must log in to submit this custom order and track production.
+              </span>
+            </div>
+            {onOpenAuthModal && (
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={onOpenAuthModal}
+                className="text-xs h-8 border-amber-300 dark:border-amber-700 bg-white dark:bg-brand-dark-card hover:bg-amber-100 self-start sm:self-auto shrink-0"
+              >
+                Log In / Register
+              </Button>
+            )}
+          </div>
+        )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Input

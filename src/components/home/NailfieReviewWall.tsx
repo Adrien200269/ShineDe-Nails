@@ -60,7 +60,7 @@ const INITIAL_NAILFIES: NailfieItem[] = [
     shape: "Coffin",
     length: "Long",
     styleTag: "Coffin & Square",
-    comment: "The custom millimeter sizing fit like magic! My nail beds are super petite (XS) and drugstore nails never fit. ShineDe is now my holy grail 💕",
+    comment: "The custom millimeter sizing fit like magic! My nail beds are super petite (XS) and drugstore nails never fit. ShineDe is now my holy grail!",
     date: "4 days ago",
     likes: 35,
   },
@@ -528,7 +528,7 @@ export function NailfieReviewWall() {
               </span>
 
               <h3 className="font-serif text-2xl font-bold text-gray-900 dark:text-white">
-                Here is your Rs. 100 Discount Code! 🎉
+                Here is your Rs. 100 Discount Code!
               </h3>
 
               <p className="text-xs text-gray-600 dark:text-brand-dark-muted">

@@ -18,6 +18,8 @@ import {
   Crown,
   Heart,
   Ruler,
+  Gem,
+  ShieldCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -158,42 +160,42 @@ const QUESTIONS: QuizQuestion[] = [
 
 const SHAPE_DETAILS: Record<
   string,
-  { name: string; title: string; desc: string; icon: string; tags: string[] }
+  { name: string; title: string; desc: string; icon: React.ReactNode; tags: string[] }
 > = {
   almond: {
     name: "Almond",
     title: "The Universally Flattering Royal Silhouette",
     desc: "Tapered gently along the side walls into a soft rounded apex. It elongates shorter fingers effortlessly while remaining sturdy and keyboard-friendly.",
-    icon: "🌰",
-    tags: ["#1 Best Seller", "Slenderizes Hands", "Natural Chic"],
+    icon: <Sparkles className="w-10 h-10 text-brand-primary" />,
+    tags: ["Signature Cut", "Elongating", "Everyday Chic"],
   },
   coffin: {
     name: "Coffin / Ballerina",
     title: "The High-Glam Statement Architecture",
-    desc: "Tapered side walls terminating in a razor-sharp, flat square tip. Perfect for modern Y2K nail art, 3D charms, and glamorous event looks.",
-    icon: "💎",
-    tags: ["Instagram Baddie", "Art Canvas", "Ultra Modern"],
+    desc: "Tapered side walls terminating in a razor-sharp, flat square tip. Perfect for modern nail art, 3D accents, and elevated styling.",
+    icon: <Gem className="w-10 h-10 text-brand-primary" />,
+    tags: ["Statement Silhouette", "Art Canvas", "Contemporary"],
   },
   square: {
     name: "Square",
-    title: "Crisp Parisian Classic Symmetry",
+    title: "Crisp Classic Symmetry",
     desc: "Crisp parallel side walls meeting a sharp 90-degree horizontal edge. The quintessential canvas for timeless French tips and bold modern geometry.",
-    icon: "📐",
-    tags: ["Classic French", "Symmetrical", "Sturdy Tip"],
+    icon: <Ruler className="w-10 h-10 text-brand-primary" />,
+    tags: ["Classic French", "Symmetrical Line", "Reinforced Edge"],
   },
   oval: {
     name: "Oval",
     title: "Effortless Everyday Minimalist Luxury",
-    desc: "A soft, organic curvature that mirrors your natural cuticle line. Ideal for keyboard typists, active routines, and the 'Clean Girl' aesthetic.",
-    icon: "✨",
-    tags: ["Keyboard Friendly", "Zero Snag", "Clean Girl"],
+    desc: "A soft, organic curvature that mirrors your natural cuticle line. Ideal for keyboard typists, active routines, and understated elegance.",
+    icon: <ShieldCheck className="w-10 h-10 text-brand-primary" />,
+    tags: ["Keyboard Friendly", "Snag-Free", "Natural Contour"],
   },
   stiletto: {
     name: "Stiletto",
-    title: "Fierce Runway Piercing Drama",
-    desc: "Dramatic aggressive taper into a needle-sharp piercing tip. Guaranteed to turn heads, photograph like a dream, and make a fierce style statement.",
-    icon: "⚡",
-    tags: ["Runway Drama", "Fierce", "Photoshoot Queen"],
+    title: "Dramatic Sculptural Edge",
+    desc: "Dramatic taper into a sharp piercing tip. Guaranteed to create an unforgettable silhouette, ideal for editorial styling and special events.",
+    icon: <Flame className="w-10 h-10 text-brand-primary" />,
+    tags: ["Editorial", "Sculptural", "Event Statement"],
   },
 };
 
@@ -393,7 +395,7 @@ export default function ShapeQuizPage() {
               <div className="rounded-4xl border border-brand-primary/40 bg-white dark:bg-brand-dark-surface p-6 sm:p-8 shadow-pink-lg dark:shadow-dark-card space-y-6 text-center sm:text-left">
                 {/* Result Title Card */}
                 <div className="flex flex-col sm:flex-row items-center gap-5 pb-6 border-b border-pink-100 dark:border-brand-dark-border">
-                  <div className="flex h-24 w-24 items-center justify-center rounded-3xl bg-gradient-to-tr from-brand-primary-light to-pink-100 dark:from-brand-primary/20 dark:to-brand-dark-card border-2 border-brand-primary/30 text-4xl shadow-pink-sm shrink-0">
+                  <div className="flex h-24 w-24 items-center justify-center rounded-3xl bg-gradient-to-tr from-brand-primary-light to-pink-100 dark:from-brand-primary/20 dark:to-brand-dark-card border-2 border-brand-primary/30 shadow-pink-sm shrink-0">
                     {results.shapeInfo.icon}
                   </div>
 

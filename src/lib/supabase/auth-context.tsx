@@ -80,7 +80,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setIsLoading(false);
       });
 
-      const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
         if (session?.user) {
           const u: UserSession = {
             id: session.user.id,
@@ -89,7 +89,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             avatarUrl: session.user.user_metadata?.avatar_url,
           };
           persistUser(u);
-        } else {
+        } else if (event === "SIGNED_OUT") {
           setUser(null);
           try {
             localStorage.removeItem(LOCAL_USER_KEY);

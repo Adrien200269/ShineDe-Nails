@@ -4,6 +4,7 @@ import * as React from "react";
 import Image from "next/image";
 import { Sparkles, Lock, ShieldCheck, ArrowRight, AlertCircle, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 interface AdminLoginProps {
   onLoginSuccess: () => void;
@@ -50,7 +51,10 @@ export function AdminLogin({ onLoginSuccess }: AdminLoginProps) {
   };
 
   return (
-    <div className="min-h-screen bg-brand-bg dark:bg-brand-dark-bg subtle-sparkle-bg flex items-center justify-center p-4 sm:p-6 transition-colors">
+    <div className="min-h-screen bg-brand-bg dark:bg-brand-dark-bg subtle-sparkle-bg flex items-center justify-center p-4 sm:p-6 transition-colors relative">
+      <div className="absolute top-4 right-4 z-20">
+        <ThemeToggle />
+      </div>
       <div className="w-full max-w-md space-y-6">
         <div className="rounded-4xl border border-pink-200 dark:border-brand-dark-border bg-white dark:bg-brand-dark-surface p-7 sm:p-9 shadow-pink-md dark:shadow-dark-card space-y-6">
           {/* Logo & Portal Header */}

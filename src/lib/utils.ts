@@ -40,6 +40,7 @@ export function createWhatsAppOrderLink({
   sizingType?: string;
   standardSize?: string;
   measurements?: { thumb: number; index: number; middle: number; ring: number; pinky: number };
+  coinPhotoUrl?: string;
   imageUrl?: string;
   totalPrice?: number;
   customerName?: string;
@@ -49,6 +50,8 @@ export function createWhatsAppOrderLink({
   let sizeText = "";
   if (sizingType === "standard" && standardSize) {
     sizeText = `Size ${standardSize}`;
+  } else if (sizingType === "coin_photo") {
+    sizeText = "Hand & Coin Photo Attached (Studio Measured)";
   } else if (measurements) {
     sizeText = `Custom mm (T:${measurements.thumb}, I:${measurements.index}, M:${measurements.middle}, R:${measurements.ring}, P:${measurements.pinky})`;
   } else {

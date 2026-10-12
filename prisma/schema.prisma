@@ -14,33 +14,64 @@ model Profile {
   fullName          String?       @map("full_name")
   phone             String?
   savedMeasurements Json?         @map("saved_measurements")
-  customOrders      CustomOrder[]
   createdAt         DateTime      @default(now()) @map("created_at")
   updatedAt         DateTime      @updatedAt @map("updated_at")
+  customOrders      CustomOrder[]
 
   @@map("profiles")
 }
 
 model CustomOrder {
-  id            String    @id @default(uuid())
-  orderNumber   String    @unique @map("order_number")
-  userId        String?   @map("user_id")
-  user          Profile?  @relation(fields: [userId], references: [id], onDelete: SetNull)
-  customerName  String    @map("customer_name")
-  customerEmail String    @map("customer_email")
-  customerPhone String?   @map("customer_phone")
-  imageUrl      String    @map("image_url")
+  id            String   @id @default(uuid())
+  orderNumber   String   @unique @map("order_number")
+  userId        String?  @map("user_id")
+  customerName  String   @map("customer_name")
+  customerEmail String   @map("customer_email")
+  customerPhone String?  @map("customer_phone")
+  imageUrl      String   @map("image_url")
   shape         String
   length        String
-  finish        String    @default("glossy")
-  sizingType    String    @map("sizing_type")
-  sizeData      Json      @map("size_data")
+  finish        String   @default("glossy")
+  sizingType    String   @map("sizing_type")
+  sizeData      Json     @map("size_data")
   notes         String?
-  status        String    @default("Pending")
-  totalPrice    Decimal   @default(45.00) @map("total_price") @db.Decimal(10, 2)
-  paymentStatus String    @default("unpaid") @map("payment_status")
-  createdAt     DateTime  @default(now()) @map("created_at")
-  updatedAt     DateTime  @updatedAt @map("updated_at")
+  status        String   @default("Pending")
+  totalPrice    Decimal  @default(45.00) @map("total_price") @db.Decimal(10, 2)
+  paymentStatus String   @default("unpaid") @map("payment_status")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  user          Profile? @relation(fields: [userId], references: [id])
 
   @@map("custom_orders")
+}
+
+model NailDesign {
+  id        String   @id @default(uuid())
+  title     String
+  image     String
+  price     Decimal  @default(700.00) @db.Decimal(10, 2)
+  shape     String   @default("almond")
+  length    String   @default("medium")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("nail_designs")
+}
+
+model ChatMessage {
+  id            String   @id @default(uuid())
+  orderId       String   @map("order_id")
+  orderNumber   String   @map("order_number")
+  customerEmail String?  @map("customer_email")
+  customerName  String?  @map("customer_name")
+  senderRole    String   @map("sender_role")
+  senderName    String   @map("sender_name")
+  message       String
+  imageUrl      String?  @map("image_url")
+  audioUrl      String?  @map("audio_url")
+  audioDuration Int?     @map("audio_duration")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@index([orderId])
+  @@map("chat_messages")
 }

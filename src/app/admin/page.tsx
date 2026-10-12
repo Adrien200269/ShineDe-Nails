@@ -16,16 +16,18 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { AdminLogin } from "@/components/admin/AdminLogin";
 import { AdminAnalyticsChart } from "@/components/admin/AdminAnalyticsChart";
 import { AdminOrdersTable } from "@/components/admin/AdminOrdersTable";
 import { AdminUsersTable } from "@/components/admin/AdminUsersTable";
+import { AdminNailDesignsManager } from "@/components/admin/AdminNailDesignsManager";
 import { NailConsultationChat } from "@/components/chat/NailConsultationChat";
 import { CustomOrder, OrderStatus, UserProfile } from "@/types";
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = React.useState<boolean | null>(null);
-  const [activeTab, setActiveTab] = React.useState<"analytics" | "orders" | "chat" | "users">("analytics");
+  const [activeTab, setActiveTab] = React.useState<"analytics" | "orders" | "designs" | "chat" | "users">("analytics");
   const [orders, setOrders] = React.useState<CustomOrder[]>([]);
   const [profiles, setProfiles] = React.useState<Array<UserProfile & { _count?: { customOrders?: number } }>>([]);
   const [isLoadingData, setIsLoadingData] = React.useState(true);
@@ -70,7 +72,7 @@ export default function AdminPage() {
           size_data: o.sizeData || o.size_data,
           notes: o.notes,
           status: o.status,
-          total_price: Number(o.totalPrice || o.total_price || 1499),
+          total_price: Number(o.totalPrice || o.total_price || 700),
           payment_status: o.paymentStatus || o.payment_status || "paid",
           created_at: o.createdAt || o.created_at || new Date().toISOString(),
         }));
@@ -184,7 +186,7 @@ export default function AdminPage() {
                   </span>
                 </div>
                 <span className="text-[10px] text-gray-400 font-semibold hidden sm:inline">
-                  PRESS. SLAY. REPEAT. · 🇳🇵 Kathmandu
+                  Studio Workspace · Kathmandu, Nepal
                 </span>
               </div>
             </Link>
@@ -192,6 +194,8 @@ export default function AdminPage() {
 
           {/* Quick Actions & Logout */}
           <div className="flex items-center gap-2 sm:gap-3">
+            <ThemeToggle />
+
             <button
               type="button"
               onClick={loadAdminData}
@@ -202,7 +206,7 @@ export default function AdminPage() {
             </button>
 
             <Link href="/" target="_blank">
-              <Button variant="outline" size="sm" className="hidden sm:inline-flex gap-1.5 h-9 text-xs border-pink-200">
+              <Button variant="outline" size="sm" className="hidden sm:inline-flex gap-1.5 h-9 text-xs border-pink-200 dark:border-brand-dark-border">
                 <ExternalLink className="w-3.5 h-3.5" />
                 <span>Customer Site</span>
               </Button>
@@ -247,6 +251,19 @@ export default function AdminPage() {
             >
               <Package className="w-4 h-4" />
               <span>Custom Orders ({orders.length})</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab("designs")}
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl transition-all whitespace-nowrap ${
+                activeTab === "designs"
+                  ? "bg-brand-primary text-white shadow-pink-sm"
+                  : "text-gray-600 dark:text-brand-dark-muted hover:text-brand-primary"
+              }`}
+            >
+              <Sparkles className="w-4 h-4" />
+              <span>Nail Gallery & Prices</span>
             </button>
 
             <button
@@ -314,7 +331,10 @@ export default function AdminPage() {
           />
         )}
 
-        {/* TAB 3: Client Nail Consultation Chat */}
+        {/* TAB 3: Customer Page Nail Catalog & Pricing */}
+        {activeTab === "designs" && <AdminNailDesignsManager />}
+
+        {/* TAB 4: Client Nail Consultation Chat */}
         {activeTab === "chat" && (
           <div className="space-y-4">
             <div>

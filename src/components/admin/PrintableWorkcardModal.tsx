@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Printer, X, Sparkles, CheckSquare, Scissors, Ruler, Paintbrush } from "lucide-react";
+import { Printer, X, Sparkles, CheckSquare, Scissors, Ruler, Paintbrush, Camera } from "lucide-react";
 import { CustomOrder } from "@/types";
 import { Button } from "@/components/ui/button";
 
@@ -22,6 +22,7 @@ export function PrintableWorkcardModal({
     window.print();
   };
 
+  const isCoinPhoto = order.size_data?.type === "coin_photo" || order.sizing_type === "coin_photo" || !!order.size_data?.coinPhotoUrl;
   const isCustom = order.size_data?.type === "custom" && order.size_data.measurements;
   const measurements = order.size_data?.measurements;
 
@@ -184,7 +185,17 @@ export function PrintableWorkcardModal({
               <span>Exact Finger Sizing Blueprint (Thumb → Pinky)</span>
             </span>
 
-            {isCustom && measurements ? (
+            {isCoinPhoto ? (
+              <div className="p-3 text-center rounded-xl bg-amber-50 print:bg-gray-100 border-2 border-gray-900 space-y-1">
+                <div className="font-black text-sm text-gray-900 print:text-black flex items-center justify-center gap-1.5">
+                  <Camera className="w-4 h-4 print:text-black" />
+                  <span>Hand &amp; Coin Calibration Scale</span>
+                </div>
+                <div className="text-[10px] text-gray-600 print:text-black font-semibold">
+                  Calibrate finger widths using the Rs. 1 (20mm) or Rs. 2 (22mm) coin benchmark before crafting.
+                </div>
+              </div>
+            ) : isCustom && measurements ? (
               <div className="grid grid-cols-5 gap-1.5 text-center font-mono">
                 <div className="p-2 rounded-xl bg-pink-100/70 print:bg-gray-100 border-2 border-gray-900">
                   <div className="text-[9px] font-black uppercase text-gray-600 print:text-black">Thumb</div>

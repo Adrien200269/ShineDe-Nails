@@ -60,7 +60,7 @@ export function Footer() {
               ShineDe Nails
             </span>
             <p className="text-xs font-semibold tracking-widest text-brand-primary/80 uppercase">
-              PRESS. SLAY. REPEAT. · NEPAL 🇳🇵
+              Bespoke Handcrafted Studio · Kathmandu, Nepal
             </p>
             <p className="text-xs text-gray-600 dark:text-brand-dark-muted leading-relaxed">
               Elevating press-on nails in Nepal with bespoke luxury designs, premium materials, and custom-tailored sizing in NPR that fits your lifestyle.

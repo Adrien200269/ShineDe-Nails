@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { WhatsAppIcon } from "@/components/ui/icons";
-import { NailShape, NailLength, NailFinish, SizingType, StandardSize, NailMeasurements } from "@/types";
+import { NailShape, NailLength, NailFinish, SizingType, StandardSize, NailMeasurements, UserSession } from "@/types";
 import { formatCurrency, cn, createWhatsAppOrderLink } from "@/lib/utils";
 import { validatePromoCode, PromoCode } from "@/lib/promo";
 
@@ -27,11 +27,14 @@ interface Step5ReviewCheckoutProps {
   sizingType: SizingType;
   standardSize?: StandardSize;
   measurements?: NailMeasurements;
+  coinPhotoUrl?: string;
   notes?: string;
   customerName: string;
   customerEmail: string;
   totalPrice: number;
   isSubmitting: boolean;
+  user?: UserSession | null;
+  onRequireLogin?: () => void;
   onSubmitOrder: (discountedPrice?: number, promoCodeUsed?: string) => void;
 }
 
@@ -43,11 +46,14 @@ export function Step5ReviewCheckout({
   sizingType,
   standardSize,
   measurements,
+  coinPhotoUrl,
   notes,
   customerName,
   customerEmail,
   totalPrice,
   isSubmitting,
+  user,
+  onRequireLogin,
   onSubmitOrder,
 }: Step5ReviewCheckoutProps) {
   const [paymentOption, setPaymentOption] = React.useState<"esewa" | "card" | "cod">("esewa");
@@ -89,10 +95,10 @@ export function Step5ReviewCheckout({
           <Sparkles className="w-3.5 h-3.5" /> Step 5: Final Review & Checkout
         </span>
         <h2 className="text-2xl sm:text-3xl font-serif font-bold text-gray-900 dark:text-white">
-          Ready to Slay in Nepal? 🇳🇵
+          Review Your Custom Order
         </h2>
         <p className="text-sm text-gray-600 dark:text-brand-dark-muted mt-1">
-          Review your custom specifications before we dispatch your order to our nail artist bench.
+          Please review your custom specifications before we begin handcrafting your set in our Kathmandu studio.
         </p>
       </div>
 
@@ -147,6 +153,8 @@ export function Step5ReviewCheckout({
                   <span className="font-bold text-brand-primary">
                     {sizingType === "standard"
                       ? `Standard Size ${standardSize}`
+                      : sizingType === "coin_photo"
+                      ? "Hand & Coin Photo (Studio Measured)"
                       : "Custom Millimeter Fit"}
                   </span>
                 </div>
@@ -154,6 +162,28 @@ export function Step5ReviewCheckout({
                 {sizingType === "custom" && measurements && (
                   <div className="pt-1 text-[11px] font-mono text-gray-600 dark:text-brand-dark-muted bg-pink-50/60 dark:bg-brand-dark-card p-2 rounded-xl">
                     <span>T:{measurements.thumb}mm · I:{measurements.index}mm · M:{measurements.middle}mm · R:{measurements.ring}mm · P:{measurements.pinky}mm</span>
+                  </div>
+                )}
+
+                {sizingType === "coin_photo" && coinPhotoUrl && (
+                  <div className="pt-2">
+                    <span className="text-gray-500 dark:text-brand-dark-muted uppercase font-semibold text-[10px] block mb-1">
+                      Uploaded Hand &amp; Coin Benchmark:
+                    </span>
+                    <div className="flex items-center gap-3 bg-pink-50/60 dark:bg-brand-dark-card p-2.5 rounded-2xl border border-pink-100 dark:border-brand-dark-border">
+                      <div className="relative w-14 h-14 rounded-xl overflow-hidden border border-pink-200 dark:border-brand-dark-border shrink-0 bg-white">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={coinPhotoUrl}
+                          alt="Hand with coin preview"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="text-[11px] text-gray-600 dark:text-brand-dark-muted">
+                        <span className="font-bold text-gray-900 dark:text-white block">Coin Scale Photo Attached</span>
+                        <span>Our nail artist will calculate exact mm from coin before crafting.</span>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
@@ -189,13 +219,13 @@ export function Step5ReviewCheckout({
             <div className="space-y-2 text-xs text-gray-600 dark:text-brand-dark-muted">
               <div className="flex justify-between">
                 <span>Handcrafted Custom Set</span>
-                <span className="font-semibold text-gray-900 dark:text-white">{formatCurrency(1499)}</span>
+                <span className="font-semibold text-gray-900 dark:text-white">{formatCurrency(700)}</span>
               </div>
               {length !== "short" && (
                 <div className="flex justify-between">
                   <span>Length ({length.replace("_", " ")})</span>
                   <span className="font-semibold text-gray-900 dark:text-white">
-                    +{formatCurrency(length === "medium" ? 150 : length === "long" ? 300 : 450)}
+                    +{formatCurrency(length === "medium" ? 100 : length === "long" ? 200 : 300)}
                   </span>
                 </div>
               )}
@@ -275,8 +305,9 @@ export function Step5ReviewCheckout({
                 <div>
                   <span className="font-bold text-gray-900 dark:text-white text-base font-serif block">Total Due</span>
                   {discountAmount > 0 && (
-                    <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider">
-                      ✨ You saved {formatCurrency(discountAmount)}!
+                    <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider flex items-center gap-1">
+                      <Tag className="w-3 h-3" />
+                      <span>You saved {formatCurrency(discountAmount)}</span>
                     </span>
                   )}
                 </div>
@@ -416,23 +447,62 @@ export function Step5ReviewCheckout({
                 </div>
               )}
 
-              <div className="text-[11px] text-gray-500 dark:text-brand-dark-muted flex items-center gap-1.5 pt-1">
-                <ShieldCheck className="w-4 h-4 text-brand-primary shrink-0" />
-                <span>
-                  Placed by: <strong>{customerName || "Valued Client"}</strong> ({customerEmail})
-                </span>
-              </div>
+              {/* User Authentication Status Banner */}
+              {user ? (
+                <div className="text-[11px] text-gray-600 dark:text-brand-dark-muted flex items-center justify-between p-2.5 rounded-xl bg-pink-50/70 dark:bg-brand-primary/10 border border-pink-200 dark:border-brand-dark-border">
+                  <div className="flex items-center gap-1.5 truncate">
+                    <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
+                    <span className="truncate">
+                      Ordering as: <strong className="text-gray-900 dark:text-white">{user.fullName || customerName || "Customer"}</strong> ({user.email})
+                    </span>
+                  </div>
+                  <span className="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider bg-emerald-100 dark:bg-emerald-950/60 px-2 py-0.5 rounded-full shrink-0">
+                    Logged In
+                  </span>
+                </div>
+              ) : (
+                <div className="p-3 rounded-2xl border border-pink-300 dark:border-brand-primary/40 bg-pink-50/80 dark:bg-brand-dark-card space-y-2 text-xs">
+                  <div className="flex items-start gap-2">
+                    <Lock className="w-4 h-4 text-brand-primary shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-bold text-gray-900 dark:text-white">Account Required to Order</p>
+                      <p className="text-[11px] text-gray-600 dark:text-brand-dark-muted">
+                        Please log in so we can link your bespoke nail design, confirm sizes, and send delivery updates.
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    type="button"
+                    onClick={onRequireLogin}
+                    className="w-full h-9 text-xs font-bold gap-1.5 shadow-pink-sm"
+                  >
+                    <Lock className="w-3.5 h-3.5" />
+                    <span>Log In / Sign Up to Order</span>
+                  </Button>
+                </div>
+              )}
 
               {/* Submit CTA */}
-              <Button
-                type="button"
-                onClick={() => onSubmitOrder(finalTotal, appliedPromo?.code)}
-                isLoading={isSubmitting}
-                className="w-full mt-3 h-13 text-base shadow-pink-md gap-2"
-              >
-                <span>Place Custom Order ({formatCurrency(finalTotal)})</span>
-                <ArrowRight className="w-4 h-4" />
-              </Button>
+              {user ? (
+                <Button
+                  type="button"
+                  onClick={() => onSubmitOrder(finalTotal, appliedPromo?.code)}
+                  isLoading={isSubmitting}
+                  className="w-full mt-2 h-13 text-base shadow-pink-md gap-2"
+                >
+                  <span>Place Custom Order ({formatCurrency(finalTotal)})</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  onClick={onRequireLogin}
+                  className="w-full mt-2 h-13 text-base shadow-pink-md gap-2 bg-gradient-to-r from-brand-primary to-pink-600 hover:from-brand-primary-hover hover:to-pink-700"
+                >
+                  <Lock className="w-4 h-4" />
+                  <span>Log In to Place Order ({formatCurrency(finalTotal)})</span>
+                </Button>
+              )}
 
               {/* 1-Click WhatsApp Order Forwarding */}
               <div className="relative flex py-1 items-center">
@@ -443,25 +513,37 @@ export function Step5ReviewCheckout({
                 <div className="flex-grow border-t border-pink-100 dark:border-brand-dark-border" />
               </div>
 
-              <a
-                href={createWhatsAppOrderLink({
-                  shape,
-                  length,
-                  finish,
-                  sizingType,
-                  standardSize,
-                  measurements,
-                  imageUrl,
-                  totalPrice: finalTotal,
-                  customerName: customerName ? `${customerName}${appliedPromo ? ` (Promo: ${appliedPromo.code})` : ""}` : "",
-                })}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full flex items-center justify-center gap-2 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 text-xs sm:text-sm shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99]"
-              >
-                <WhatsAppIcon className="w-4 h-4 fill-current" />
-                <span>Send Order Summary to WhatsApp</span>
-              </a>
+              {user ? (
+                <a
+                  href={createWhatsAppOrderLink({
+                    shape,
+                    length,
+                    finish,
+                    sizingType,
+                    standardSize,
+                    measurements,
+                    coinPhotoUrl,
+                    imageUrl,
+                    totalPrice: finalTotal,
+                    customerName: customerName ? `${customerName}${appliedPromo ? ` (Promo: ${appliedPromo.code})` : ""}` : "",
+                  })}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full flex items-center justify-center gap-2 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 text-xs sm:text-sm shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99]"
+                >
+                  <WhatsAppIcon className="w-4 h-4 fill-current" />
+                  <span>Send Order Summary to WhatsApp</span>
+                </a>
+              ) : (
+                <button
+                  type="button"
+                  onClick={onRequireLogin}
+                  className="w-full flex items-center justify-center gap-2 rounded-2xl border border-emerald-300 dark:border-emerald-800 bg-emerald-50/60 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 font-bold py-3 text-xs sm:text-sm shadow-sm transition-all cursor-pointer"
+                >
+                  <Lock className="w-4 h-4" />
+                  <span>Log In to Finalize on WhatsApp</span>
+                </button>
+              )}
             </div>
           </div>
         </div>

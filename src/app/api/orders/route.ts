@@ -34,43 +34,78 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
+    const userId = body.user_id || body.userId;
+    const authCookie = req.cookies.get("shinede_auth_session")?.value;
+    let cookieUserId: string | null = null;
+    if (authCookie) {
+      try {
+        const parsed = JSON.parse(decodeURIComponent(authCookie));
+        cookieUserId = parsed.id || null;
+      } catch {
+        // Ignore parsing errors
+      }
+    }
+
+    const effectiveUserId = userId || cookieUserId;
+
+    if (!effectiveUserId) {
+      return NextResponse.json(
+        { success: false, error: "Authentication required. You must log in to place an order." },
+        { status: 401 }
+      );
+    }
+
+    const customerEmail = body.customer_email || body.customerEmail;
+    const customerName = body.customer_name || body.customerName;
+    const customerPhone = body.customer_phone || body.customerPhone || null;
+    const sizeData = body.size_data || body.sizeData;
+
+    // Ensure user profile exists to satisfy foreign key relation
+    let profileId: string | null = null;
+    if (customerEmail) {
+      try {
+        const profile = await prisma.profile.upsert({
+          where: { email: customerEmail },
+          update: {
+            fullName: customerName,
+            phone: customerPhone || undefined,
+          },
+          create: {
+            id: effectiveUserId,
+            email: customerEmail,
+            fullName: customerName,
+            phone: customerPhone || undefined,
+            savedMeasurements: sizeData as any,
+          },
+        });
+        profileId = profile.id;
+      } catch (err) {
+        console.warn("Profile upsert warning:", err);
+      }
+    }
+
     const createdOrder = await prisma.customOrder.create({
       data: {
         orderNumber: body.order_number || body.orderNumber,
-        userId: body.user_id || body.userId || null,
-        customerName: body.customer_name || body.customerName,
-        customerEmail: body.customer_email || body.customerEmail,
-        customerPhone: body.customer_phone || body.customerPhone || null,
+        userId: profileId || effectiveUserId,
+        customerName: customerName,
+        customerEmail: customerEmail,
+        customerPhone: customerPhone,
         imageUrl: body.image_url || body.imageUrl,
         shape: body.shape,
         length: body.length,
         finish: body.finish || "glossy",
         sizingType: body.sizing_type || body.sizingType,
-        sizeData: body.size_data || body.sizeData,
+        sizeData: sizeData,
         notes: body.notes || "",
         status: body.status || "Pending",
-        totalPrice: body.total_price || body.totalPrice || 45.0,
+        totalPrice: body.total_price || body.totalPrice || 700.0,
         paymentStatus: body.payment_status || body.paymentStatus || "paid",
       },
     });
 
-    // Also upsert user profile if customer email provided
+    // Send Gmail confirmation to customer and admin
     if (createdOrder.customerEmail) {
-      await prisma.profile.upsert({
-        where: { email: createdOrder.customerEmail },
-        update: {
-          fullName: createdOrder.customerName,
-          phone: createdOrder.customerPhone || undefined,
-        },
-        create: {
-          email: createdOrder.customerEmail,
-          fullName: createdOrder.customerName,
-          phone: createdOrder.customerPhone || undefined,
-          savedMeasurements: createdOrder.sizeData as any,
-        },
-      }).catch((err) => console.warn("Profile upsert warning:", err));
-
-      // Send Gmail confirmation to customer and admin
       sendOrderConfirmationEmail({
         to: createdOrder.customerEmail,
         customerName: createdOrder.customerName,

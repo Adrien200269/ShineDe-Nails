@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
 import {
@@ -17,46 +18,25 @@ import {
 import { InstagramIcon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { NailfieReviewWall } from "@/components/home/NailfieReviewWall";
+import { NailDesign, fetchNailDesigns } from "@/lib/nail-designs";
 
 export default function HomePage() {
   const { scrollYProgress } = useScroll();
+  const [nailDesigns, setNailDesigns] = React.useState<NailDesign[]>([]);
+  const [isLoadingDesigns, setIsLoadingDesigns] = React.useState(true);
+
+  React.useEffect(() => {
+    fetchNailDesigns()
+      .then((data) => setNailDesigns(data))
+      .catch((err) => console.warn("Could not load nail designs:", err))
+      .finally(() => setIsLoadingDesigns(false));
+  }, []);
 
   // Scroll parallax transforms for ambient luxury elements
   const yParallaxGlow = useTransform(scrollYProgress, [0, 1], [0, 180]);
   const yParallaxSparkleLeft = useTransform(scrollYProgress, [0, 1], [0, -120]);
   const yParallaxSparkleRight = useTransform(scrollYProgress, [0, 1], [0, 240]);
   const rotateGlow = useTransform(scrollYProgress, [0, 1], [0, 180]);
-
-  const trendingStyles = [
-    {
-      title: "Pink Aura Jelly Chrome",
-      shape: "Almond",
-      length: "Medium",
-      price: "Rs. 1,649",
-      image: "https://images.unsplash.com/photo-1632345031435-8727f6897d53?auto=format&fit=crop&w=700&q=80",
-    },
-    {
-      title: "Cyber Y2K Silver Drip",
-      shape: "Coffin",
-      length: "Long",
-      price: "Rs. 1,799",
-      image: "https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=700&q=80",
-    },
-    {
-      title: "Glazed Donut Pearl Tips",
-      shape: "Oval",
-      length: "Short",
-      price: "Rs. 1,499",
-      image: "https://images.unsplash.com/photo-1519014816548-bf5fe059798b?auto=format&fit=crop&w=700&q=80",
-    },
-    {
-      title: "Velvet Cat-Eye Noir",
-      shape: "Stiletto",
-      length: "Long",
-      price: "Rs. 1,849",
-      image: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=700&q=80",
-    },
-  ];
 
   const steps = [
     {
@@ -162,7 +142,7 @@ export default function HomePage() {
             <Link href="/custom-order" className="w-full sm:w-auto">
               <Button size="lg" className="w-full sm:w-auto gap-2.5 text-base shadow-pink-md group transition-all duration-300 hover:shadow-pink-lg hover:-translate-y-0.5">
                 <Sparkles className="h-5 w-5 group-hover:rotate-12 transition-transform" />
-                <span>Design Your Custom Set (From Rs. 1,499)</span>
+                <span>Design Your Custom Set (From Rs. 700)</span>
                 <ArrowRight className="h-4 w-4 group-hover:translate-x-1.5 transition-transform" />
               </Button>
             </Link>
@@ -307,46 +287,76 @@ export default function HomePage() {
             </Link>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {trendingStyles.map((item, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-40px" }}
-                transition={{ duration: 0.5, delay: idx * 0.1, ease: "easeOut" }}
-                whileHover={{ y: -6 }}
-                className="group overflow-hidden rounded-3xl border border-pink-100 dark:border-brand-dark-border bg-white dark:bg-brand-dark-card shadow-card dark:shadow-dark-card hover:shadow-pink-md dark:hover:border-brand-primary/50 transition-all flex flex-col"
-              >
-                <div className="relative aspect-square w-full overflow-hidden bg-pink-50 dark:bg-brand-dark-surface">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="h-full w-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
-                  />
-                  <div className="absolute top-3 left-3 bg-white/90 dark:bg-brand-dark-surface/90 backdrop-blur-md text-[11px] font-bold text-brand-primary px-2.5 py-1 rounded-full border border-pink-200 dark:border-brand-dark-border shadow-xs">
-                    {item.shape} · {item.length}
+          {isLoadingDesigns ? (
+            <div className="py-16 text-center">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-brand-primary border-t-transparent mx-auto mb-2" />
+              <p className="text-xs text-gray-500">Loading custom nail creations...</p>
+            </div>
+          ) : nailDesigns.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {nailDesigns.map((item, idx) => (
+                <motion.div
+                  key={item.id || idx}
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 0.5, delay: idx * 0.1, ease: "easeOut" }}
+                  whileHover={{ y: -6 }}
+                  className="group overflow-hidden rounded-3xl border border-pink-100 dark:border-brand-dark-border bg-white dark:bg-brand-dark-card shadow-card dark:shadow-dark-card hover:shadow-pink-md dark:hover:border-brand-primary/50 transition-all flex flex-col"
+                >
+                  <div className="relative aspect-square w-full overflow-hidden bg-pink-50 dark:bg-brand-dark-surface">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="h-full w-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
+                    />
+                    <div className="absolute top-3 left-3 bg-white/90 dark:bg-brand-dark-surface/90 backdrop-blur-md text-[11px] font-bold text-brand-primary px-2.5 py-1 rounded-full border border-pink-200 dark:border-brand-dark-border shadow-xs">
+                      {item.shape || "Almond"} · {item.length || "Medium"}
+                    </div>
                   </div>
-                </div>
 
-                <div className="p-4 flex flex-col justify-between flex-1">
-                  <div>
-                    <h3 className="font-serif font-bold text-gray-900 dark:text-white text-sm group-hover:text-brand-primary transition-colors">
-                      {item.title}
-                    </h3>
-                    <p className="text-xs text-brand-primary font-bold mt-1">Starting from {item.price}</p>
+                  <div className="p-4 flex flex-col justify-between flex-1">
+                    <div>
+                      <h3 className="font-serif font-bold text-gray-900 dark:text-white text-sm group-hover:text-brand-primary transition-colors">
+                        {item.title}
+                      </h3>
+                      <p className="text-xs text-brand-primary font-bold mt-1">Starting from Rs. {item.price}</p>
+                    </div>
+                    <Link
+                      href={`/custom-order?shape=${encodeURIComponent(item.shape?.toLowerCase() || "almond")}&length=${encodeURIComponent(item.length?.toLowerCase() || "medium")}`}
+                      className="mt-3 pt-3 border-t border-pink-100 dark:border-brand-dark-border"
+                    >
+                      <span className="text-xs font-bold text-brand-primary hover:underline flex items-center gap-1 group-hover:gap-1.5 transition-all">
+                        <span>Customize this set</span>
+                        <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" />
+                      </span>
+                    </Link>
                   </div>
-                  <Link href={`/custom-order`} className="mt-3 pt-3 border-t border-pink-100 dark:border-brand-dark-border">
-                    <span className="text-xs font-bold text-brand-primary hover:underline flex items-center gap-1 group-hover:gap-1.5 transition-all">
-                      <span>Customize this set</span>
-                      <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" />
-                    </span>
-                  </Link>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-3xl border border-pink-200 dark:border-brand-dark-border bg-white/80 dark:bg-brand-dark-card/80 p-8 sm:p-12 text-center space-y-4 max-w-xl mx-auto shadow-sm backdrop-blur-sm">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-primary-light dark:bg-brand-primary/20 text-brand-primary shadow-sm">
+                <Sparkles className="h-7 w-7" />
+              </div>
+              <div>
+                <h3 className="font-serif text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
+                  Handcrafted Bespoke Press-On Nails
+                </h3>
+                <p className="mt-2 text-xs sm:text-sm text-gray-600 dark:text-brand-dark-muted leading-relaxed">
+                  Every set at ShineDe Nails is custom-sculpted by our artists in Kathmandu to your exact sizing and inspiration photo. Base price begins at just <strong>Rs. 700</strong>!
+                </p>
+              </div>
+              <Link href="/custom-order" className="inline-block pt-1">
+                <Button size="lg" className="shadow-pink-md gap-2">
+                  <span>Design Your Custom Set (From Rs. 700)</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Button>
+              </Link>
+            </div>
+          )}
         </div>
       </section>
 

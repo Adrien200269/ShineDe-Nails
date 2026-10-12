@@ -129,6 +129,7 @@ export async function submitCustomOrder(order: Omit<CustomOrder, "id" | "created
         const savedOrder: CustomOrder = {
           id: result.data.id,
           order_number: result.data.orderNumber || result.data.order_number,
+          user_id: result.data.userId || result.data.user_id,
           customer_name: result.data.customerName || result.data.customer_name,
           customer_email: result.data.customerEmail || result.data.customer_email,
           customer_phone: result.data.customerPhone || result.data.customer_phone,
@@ -147,8 +148,16 @@ export async function submitCustomOrder(order: Omit<CustomOrder, "id" | "created
         saveOrderToLocalStorage(savedOrder);
         return savedOrder;
       }
+    } else {
+      const errData = await res.json().catch(() => ({}));
+      if (res.status === 401) {
+        throw new Error(errData.error || "Authentication required. Please log in to place an order.");
+      }
     }
   } catch (err) {
+    if (err instanceof Error && err.message.includes("Authentication required")) {
+      throw err;
+    }
     console.warn("API database submission error, using local storage cache:", err);
   }
 

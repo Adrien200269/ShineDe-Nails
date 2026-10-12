@@ -14,12 +14,13 @@ export interface NailMeasurements {
   pinky: number;
 }
 
-export type SizingType = "standard" | "custom";
+export type SizingType = "standard" | "custom" | "coin_photo";
 
 export interface SizeData {
   type: SizingType;
   standardSize?: StandardSize;
   measurements?: NailMeasurements;
+  coinPhotoUrl?: string;
 }
 
 export type OrderStatus = "Pending" | "Designing" | "Shipped" | "Delivered" | "Cancelled";
