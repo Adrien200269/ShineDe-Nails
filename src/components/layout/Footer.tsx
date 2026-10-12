@@ -77,6 +77,11 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/quiz" className="hover:text-brand-primary transition-colors">
+                  Find My Shape Quiz (30s)
+                </Link>
+              </li>
+              <li>
                 <Link href="/how-to-measure" className="hover:text-brand-primary transition-colors">
                   Nail Sizing Guide
                 </Link>

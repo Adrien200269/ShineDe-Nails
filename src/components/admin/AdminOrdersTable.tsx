@@ -16,8 +16,12 @@ import {
   User,
   Ruler,
   ChevronDown,
+  Download,
+  FileSpreadsheet,
+  Printer,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PrintableWorkcardModal } from "./PrintableWorkcardModal";
 import { CustomOrder, OrderStatus } from "@/types";
 
 interface AdminOrdersTableProps {
@@ -34,6 +38,7 @@ export function AdminOrdersTable({
   const [search, setSearch] = React.useState("");
   const [statusFilter, setStatusFilter] = React.useState<string>("All");
   const [selectedOrder, setSelectedOrder] = React.useState<CustomOrder | null>(null);
+  const [workcardOrder, setWorkcardOrder] = React.useState<CustomOrder | null>(null);
   const [isUpdatingStatus, setIsUpdatingStatus] = React.useState<string | null>(null);
 
   const filteredOrders = React.useMemo(() => {
@@ -58,6 +63,77 @@ export function AdminOrdersTable({
     }
   };
 
+  const handleExportCSV = () => {
+    if (orders.length === 0) {
+      alert("No orders available to export.");
+      return;
+    }
+
+    const headers = [
+      "Order Number",
+      "Customer Name",
+      "Customer Email",
+      "Customer Phone",
+      "Shape",
+      "Length",
+      "Finish",
+      "Sizing Type",
+      "Size Details",
+      "Status",
+      "Payment Status",
+      "Total Price (NPR)",
+      "Created Date",
+      "Notes",
+      "Image URL",
+    ];
+
+    const escapeCSV = (val: any) => {
+      if (val === null || val === undefined) return '""';
+      const str = String(val).replace(/"/g, '""');
+      return `"${str}"`;
+    };
+
+    const rows = filteredOrders.map((order) => {
+      let sizeDetails = "";
+      if (order.size_data?.type === "custom" && order.size_data.measurements) {
+        const m = order.size_data.measurements;
+        sizeDetails = `T:${m.thumb}mm I:${m.index}mm M:${m.middle}mm R:${m.ring}mm P:${m.pinky}mm`;
+      } else {
+        sizeDetails = `Size ${order.size_data?.standardSize || "M"}`;
+      }
+
+      return [
+        escapeCSV(order.order_number),
+        escapeCSV(order.customer_name),
+        escapeCSV(order.customer_email),
+        escapeCSV(order.customer_phone || ""),
+        escapeCSV(order.shape),
+        escapeCSV(order.length),
+        escapeCSV(order.finish || "glossy"),
+        escapeCSV(order.sizing_type),
+        escapeCSV(sizeDetails),
+        escapeCSV(order.status),
+        escapeCSV(order.payment_status),
+        escapeCSV(order.total_price),
+        escapeCSV(new Date(order.created_at).toLocaleString()),
+        escapeCSV(order.notes || ""),
+        escapeCSV(order.image_url || ""),
+      ].join(",");
+    });
+
+    const csvContent = "\uFEFF" + [headers.join(","), ...rows].join("\r\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    const dateStr = new Date().toISOString().split("T")[0];
+    link.setAttribute("href", url);
+    link.setAttribute("download", `shinede_nails_orders_${dateStr}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "Pending":
@@ -75,10 +151,10 @@ export function AdminOrdersTable({
 
   return (
     <div className="space-y-6">
-      {/* Search and Filters Bar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+      {/* Search, Filters, and Export Bar */}
+      <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
         {/* Search Input */}
-        <div className="relative w-full sm:w-80">
+        <div className="relative w-full lg:w-80">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
             type="text"
@@ -89,22 +165,36 @@ export function AdminOrdersTable({
           />
         </div>
 
-        {/* Filter Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
-          {["All", "Pending", "Designing", "Shipped", "Delivered"].map((st) => (
-            <button
-              key={st}
-              type="button"
-              onClick={() => setStatusFilter(st)}
-              className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap ${
-                statusFilter === st
-                  ? "bg-brand-primary text-white shadow-pink-sm"
-                  : "bg-white dark:bg-brand-dark-surface border border-pink-200 dark:border-brand-dark-border text-gray-600 dark:text-brand-dark-muted hover:border-brand-primary"
-              }`}
-            >
-              {st}
-            </button>
-          ))}
+        {/* Filter Pills & Export Button */}
+        <div className="flex items-center gap-2 overflow-x-auto w-full lg:w-auto pb-1 lg:pb-0 justify-between lg:justify-end">
+          <div className="flex items-center gap-1.5">
+            {["All", "Pending", "Designing", "Shipped", "Delivered"].map((st) => (
+              <button
+                key={st}
+                type="button"
+                onClick={() => setStatusFilter(st)}
+                className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap ${
+                  statusFilter === st
+                    ? "bg-brand-primary text-white shadow-pink-sm"
+                    : "bg-white dark:bg-brand-dark-surface border border-pink-200 dark:border-brand-dark-border text-gray-600 dark:text-brand-dark-muted hover:border-brand-primary"
+                }`}
+              >
+                {st}
+              </button>
+            ))}
+          </div>
+
+          {/* Export to CSV Button */}
+          <Button
+            type="button"
+            size="sm"
+            onClick={handleExportCSV}
+            className="gap-1.5 h-9 text-xs shadow-pink-sm shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white"
+            title="Download Excel / CSV spreadsheet"
+          >
+            <FileSpreadsheet className="w-3.5 h-3.5" />
+            <span>Export CSV ({filteredOrders.length})</span>
+          </Button>
         </div>
       </div>
 
@@ -255,6 +345,18 @@ export function AdminOrdersTable({
                             <Eye className="w-3.5 h-3.5" />
                             <span className="hidden md:inline">Details</span>
                           </Button>
+
+                          {/* Print 4x6 Studio Workcard */}
+                          <Button
+                            size="sm"
+                            variant="white"
+                            onClick={() => setWorkcardOrder(order)}
+                            className="h-8 text-xs gap-1 border border-pink-200 text-gray-700 dark:text-brand-dark-text hover:border-brand-primary hover:text-brand-primary"
+                            title="Print 4x6 Bench Workcard"
+                          >
+                            <Printer className="w-3.5 h-3.5 text-brand-primary" />
+                            <span className="hidden lg:inline">Workcard</span>
+                          </Button>
                         </div>
                       </td>
                     </tr>
@@ -387,9 +489,21 @@ export function AdminOrdersTable({
             {/* Modal Actions */}
             <div className="flex items-center gap-3 pt-3">
               <Button
+                variant="outline"
                 onClick={() => {
+                  setWorkcardOrder(selectedOrder);
+                }}
+                className="gap-2 border-pink-200"
+              >
+                <Printer className="w-4 h-4 text-brand-primary" />
+                <span>Print Bench Slip</span>
+              </Button>
+
+              <Button
+                onClick={() => {
+                  const orderToChat = selectedOrder;
                   setSelectedOrder(null);
-                  onOpenChat(selectedOrder);
+                  onOpenChat(orderToChat);
                 }}
                 className="flex-1 gap-2 shadow-pink-md"
               >
@@ -400,6 +514,13 @@ export function AdminOrdersTable({
           </div>
         </div>
       )}
+
+      {/* Printable 4x6 Bench Workcard Modal */}
+      <PrintableWorkcardModal
+        order={workcardOrder}
+        isOpen={!!workcardOrder}
+        onClose={() => setWorkcardOrder(null)}
+      />
     </div>
   );
 }

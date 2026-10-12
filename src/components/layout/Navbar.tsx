@@ -27,6 +27,7 @@ export function Navbar() {
 
   const navLinks = [
     { href: "/", label: "Home" },
+    { href: "/quiz", label: "Shape Quiz" },
     { href: "/how-to-measure", label: "Sizing Guide" },
     { href: "/dashboard", label: "My Orders & Sizes" },
   ];

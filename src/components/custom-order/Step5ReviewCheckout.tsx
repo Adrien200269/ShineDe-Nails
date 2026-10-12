@@ -9,10 +9,15 @@ import {
   Gift,
   ArrowRight,
   Wallet,
+  Tag,
+  Check,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { WhatsAppIcon } from "@/components/ui/icons";
 import { NailShape, NailLength, NailFinish, SizingType, StandardSize, NailMeasurements } from "@/types";
-import { formatCurrency, cn } from "@/lib/utils";
+import { formatCurrency, cn, createWhatsAppOrderLink } from "@/lib/utils";
+import { validatePromoCode, PromoCode } from "@/lib/promo";
 
 interface Step5ReviewCheckoutProps {
   imageUrl: string;
@@ -27,7 +32,7 @@ interface Step5ReviewCheckoutProps {
   customerEmail: string;
   totalPrice: number;
   isSubmitting: boolean;
-  onSubmitOrder: () => void;
+  onSubmitOrder: (discountedPrice?: number, promoCodeUsed?: string) => void;
 }
 
 export function Step5ReviewCheckout({
@@ -49,6 +54,32 @@ export function Step5ReviewCheckout({
   const [cardNumber, setCardNumber] = React.useState("•••• •••• •••• 4242");
   const [cardExp, setCardExp] = React.useState("12/28");
   const [cardCvc, setCardCvc] = React.useState("789");
+
+  // Promo code engine state
+  const [promoInput, setPromoInput] = React.useState("");
+  const [appliedPromo, setAppliedPromo] = React.useState<PromoCode | null>(null);
+  const [discountAmount, setDiscountAmount] = React.useState(0);
+  const [promoFeedback, setPromoFeedback] = React.useState<{ text: string; isError: boolean } | null>(null);
+
+  const finalTotal = Math.max(0, totalPrice - discountAmount);
+
+  const handleApplyPromo = () => {
+    const res = validatePromoCode(promoInput, totalPrice);
+    if (res.isValid && res.promo) {
+      setAppliedPromo(res.promo);
+      setDiscountAmount(res.discount);
+      setPromoFeedback({ text: res.message, isError: false });
+    } else {
+      setPromoFeedback({ text: res.message, isError: true });
+    }
+  };
+
+  const handleRemovePromo = () => {
+    setAppliedPromo(null);
+    setDiscountAmount(0);
+    setPromoInput("");
+    setPromoFeedback(null);
+  };
 
   return (
     <div className="space-y-6">
@@ -181,11 +212,84 @@ export function Step5ReviewCheckout({
                 <span className="font-semibold">FREE</span>
               </div>
 
-              <div className="pt-3 mt-3 border-t border-pink-200 dark:border-brand-dark-border flex justify-between items-baseline text-sm">
-                <span className="font-bold text-gray-900 dark:text-white text-base font-serif">Total Due</span>
-                <span className="font-bold text-2xl text-brand-primary">
-                  {formatCurrency(totalPrice)}
-                </span>
+              {/* Promo Code Input Field */}
+              <div className="pt-3 pb-1 border-t border-pink-100 dark:border-brand-dark-border space-y-1.5">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-brand-dark-muted flex items-center gap-1">
+                  <Tag className="w-3 h-3 text-brand-primary" />
+                  <span>Have a Promo Code?</span>
+                </label>
+                <div className="flex gap-1.5">
+                  <input
+                    type="text"
+                    value={promoInput}
+                    onChange={(e) => setPromoInput(e.target.value.toUpperCase())}
+                    placeholder="e.g. NAILFIE100"
+                    disabled={!!appliedPromo}
+                    className="flex-1 rounded-xl border border-pink-200 dark:border-brand-dark-border bg-pink-50/50 dark:bg-brand-dark-card px-3 py-1.5 text-xs font-mono font-bold text-gray-900 dark:text-white uppercase outline-none focus:border-brand-primary"
+                  />
+                  {appliedPromo ? (
+                    <button
+                      type="button"
+                      onClick={handleRemovePromo}
+                      className="px-3 py-1.5 rounded-xl border border-red-200 dark:border-red-900/40 text-red-600 hover:bg-red-50 text-xs font-bold transition-all"
+                    >
+                      Remove
+                    </button>
+                  ) : (
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={handleApplyPromo}
+                      disabled={!promoInput.trim()}
+                      className="px-3 text-xs shadow-pink-sm h-8"
+                    >
+                      Apply
+                    </Button>
+                  )}
+                </div>
+
+                {promoFeedback && (
+                  <p
+                    className={`text-[11px] font-semibold flex items-center gap-1 ${
+                      promoFeedback.isError ? "text-red-500" : "text-emerald-600 dark:text-emerald-400"
+                    }`}
+                  >
+                    {promoFeedback.isError ? <X className="w-3.5 h-3.5 shrink-0" /> : <Check className="w-3.5 h-3.5 shrink-0" />}
+                    <span>{promoFeedback.text}</span>
+                  </p>
+                )}
+              </div>
+
+              {/* Applied Discount Line */}
+              {appliedPromo && (
+                <div className="flex justify-between items-center text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50/70 dark:bg-emerald-950/40 p-2 rounded-xl border border-emerald-200 dark:border-emerald-900/40">
+                  <span className="flex items-center gap-1 text-xs">
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Coupon ({appliedPromo.code})</span>
+                  </span>
+                  <span className="font-mono text-xs">-{formatCurrency(discountAmount)}</span>
+                </div>
+              )}
+
+              <div className="pt-3 mt-2 border-t border-pink-200 dark:border-brand-dark-border flex justify-between items-baseline text-sm">
+                <div>
+                  <span className="font-bold text-gray-900 dark:text-white text-base font-serif block">Total Due</span>
+                  {discountAmount > 0 && (
+                    <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider">
+                      ✨ You saved {formatCurrency(discountAmount)}!
+                    </span>
+                  )}
+                </div>
+                <div className="text-right">
+                  {discountAmount > 0 && (
+                    <span className="text-xs line-through text-gray-400 block font-mono">
+                      {formatCurrency(totalPrice)}
+                    </span>
+                  )}
+                  <span className="font-bold text-2xl text-brand-primary">
+                    {formatCurrency(finalTotal)}
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -322,13 +426,42 @@ export function Step5ReviewCheckout({
               {/* Submit CTA */}
               <Button
                 type="button"
-                onClick={onSubmitOrder}
+                onClick={() => onSubmitOrder(finalTotal, appliedPromo?.code)}
                 isLoading={isSubmitting}
                 className="w-full mt-3 h-13 text-base shadow-pink-md gap-2"
               >
-                <span>Place Custom Order ({formatCurrency(totalPrice)})</span>
+                <span>Place Custom Order ({formatCurrency(finalTotal)})</span>
                 <ArrowRight className="w-4 h-4" />
               </Button>
+
+              {/* 1-Click WhatsApp Order Forwarding */}
+              <div className="relative flex py-1 items-center">
+                <div className="flex-grow border-t border-pink-100 dark:border-brand-dark-border" />
+                <span className="flex-shrink mx-2 text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+                  or finalize directly with artist
+                </span>
+                <div className="flex-grow border-t border-pink-100 dark:border-brand-dark-border" />
+              </div>
+
+              <a
+                href={createWhatsAppOrderLink({
+                  shape,
+                  length,
+                  finish,
+                  sizingType,
+                  standardSize,
+                  measurements,
+                  imageUrl,
+                  totalPrice: finalTotal,
+                  customerName: customerName ? `${customerName}${appliedPromo ? ` (Promo: ${appliedPromo.code})` : ""}` : "",
+                })}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center justify-center gap-2 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 text-xs sm:text-sm shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99]"
+              >
+                <WhatsAppIcon className="w-4 h-4 fill-current" />
+                <span>Send Order Summary to WhatsApp</span>
+              </a>
             </div>
           </div>
         </div>

@@ -6,7 +6,9 @@ import confetti from "canvas-confetti";
 import { Sparkles, CheckCircle2, Home, Eye } from "lucide-react";
 import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { WhatsAppIcon } from "@/components/ui/icons";
 import { CustomOrder } from "@/types";
+import { createWhatsAppOrderLink } from "@/lib/utils";
 
 interface OrderSuccessModalProps {
   isOpen: boolean;
@@ -83,15 +85,36 @@ export function OrderSuccessModal({ isOpen, order, onClose }: OrderSuccessModalP
 
       {/* CTAs */}
       <div className="flex flex-col gap-2.5">
+        <a
+          href={createWhatsAppOrderLink({
+            orderNumber: order.order_number,
+            shape: order.shape,
+            length: order.length,
+            finish: order.finish,
+            sizingType: order.sizing_type,
+            standardSize: order.size_data?.standardSize,
+            measurements: order.size_data?.measurements,
+            imageUrl: order.image_url,
+            totalPrice: Number(order.total_price),
+            customerName: order.customer_name,
+          })}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-full flex items-center justify-center gap-2 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 text-xs sm:text-sm shadow-md transition-all hover:scale-[1.01] active:scale-[0.99]"
+        >
+          <WhatsAppIcon className="w-4 h-4 fill-current" />
+          <span>Send Order Summary to WhatsApp</span>
+        </a>
+
         <Link href="/dashboard" onClick={onClose}>
-          <Button className="w-full gap-2">
+          <Button variant="outline" className="w-full gap-2 border-pink-200">
             <Eye className="w-4 h-4" />
             <span>Track in My Orders Dashboard</span>
           </Button>
         </Link>
 
         <Link href="/" onClick={onClose}>
-          <Button variant="outline" className="w-full gap-2">
+          <Button variant="white" className="w-full gap-2 border-pink-100 text-gray-600">
             <Home className="w-4 h-4" />
             <span>Return to Home</span>
           </Button>

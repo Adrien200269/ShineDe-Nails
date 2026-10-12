@@ -1,9 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { Sparkles, HelpCircle, Bookmark, Check } from "lucide-react";
+import { Sparkles, HelpCircle, Bookmark, Check, Coins } from "lucide-react";
 import { SizingType, StandardSize, NailMeasurements } from "@/types";
 import { HowToMeasureModal } from "./HowToMeasureModal";
+import { CoinSizingHelperModal } from "./CoinSizingHelperModal";
+import { Button } from "@/components/ui/button";
 import { getSavedMeasurements, saveMeasurementsLocally } from "@/lib/orders";
 import { cn } from "@/lib/utils";
 
@@ -25,6 +27,7 @@ export function Step3Sizing({
   onMeasurementsChange,
 }: Step3SizingProps) {
   const [isMeasureModalOpen, setIsMeasureModalOpen] = React.useState(false);
+  const [isCoinModalOpen, setIsCoinModalOpen] = React.useState(false);
   const [hasSavedProfile, setHasSavedProfile] = React.useState(false);
   const [saveToProfile, setSaveToProfile] = React.useState(true);
 
@@ -124,15 +127,26 @@ export function Step3Sizing({
           </p>
         </div>
 
-        {/* How to Measure Button */}
-        <button
-          type="button"
-          onClick={() => setIsMeasureModalOpen(true)}
-          className="inline-flex items-center justify-center gap-1.5 self-center sm:self-auto rounded-full border border-brand-primary bg-white dark:bg-brand-dark-surface px-4 py-2 text-xs font-bold text-brand-primary shadow-pink-sm hover:bg-brand-primary hover:text-white transition-all"
-        >
-          <HelpCircle className="w-4 h-4" />
-          <span>How to Measure</span>
-        </button>
+        {/* How to Measure & Coin Helper Action Buttons */}
+        <div className="flex items-center gap-2 self-center sm:self-auto flex-wrap justify-center">
+          <button
+            type="button"
+            onClick={() => setIsCoinModalOpen(true)}
+            className="inline-flex items-center justify-center gap-1.5 rounded-full bg-brand-primary text-white px-4 py-2 text-xs font-bold shadow-pink-sm hover:bg-brand-primary-hover hover:scale-105 active:scale-95 transition-all"
+          >
+            <Coins className="w-4 h-4 animate-bounce" />
+            <span>Coin Sizing Helper</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setIsMeasureModalOpen(true)}
+            className="inline-flex items-center justify-center gap-1.5 rounded-full border border-pink-300 dark:border-brand-dark-border bg-white dark:bg-brand-dark-surface px-4 py-2 text-xs font-bold text-gray-700 dark:text-brand-dark-text shadow-sm hover:border-brand-primary hover:text-brand-primary transition-all"
+          >
+            <HelpCircle className="w-4 h-4 text-brand-primary" />
+            <span>Tape & Ruler Guide</span>
+          </button>
+        </div>
       </div>
 
       {/* Sizing Method Selector Tabs */}
@@ -228,13 +242,51 @@ export function Step3Sizing({
       {/* Option B: Custom Measurements */}
       {sizingType === "custom" && (
         <div className="space-y-4 rounded-3xl border border-pink-200 dark:border-brand-dark-border bg-white dark:bg-brand-dark-card p-5 sm:p-6 shadow-sm animate-in fade-in duration-200">
-          <div>
-            <h3 className="font-serif text-lg font-bold text-gray-900 dark:text-white">
-              Enter Custom Finger Widths (in mm)
-            </h3>
-            <p className="text-xs text-gray-600 dark:text-gray-300 mt-0.5">
-              Input the width of each nail bed at its widest point. Need help? Click &quot;How to Measure&quot; above.
-            </p>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <h3 className="font-serif text-lg font-bold text-gray-900 dark:text-white">
+                Enter Custom Finger Widths (in mm)
+              </h3>
+              <p className="text-xs text-gray-600 dark:text-gray-300 mt-0.5">
+                Input the width of each nail bed at its widest point.
+              </p>
+            </div>
+
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={() => setIsCoinModalOpen(true)}
+              className="gap-1.5 border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white self-start sm:self-auto text-xs"
+            >
+              <Coins className="w-3.5 h-3.5" />
+              <span>Calibrate with Coin (Auto-mm)</span>
+            </Button>
+          </div>
+
+          {/* Interactive Coin Helper Highlight Banner */}
+          <div className="flex items-center justify-between p-3.5 rounded-2xl bg-gradient-to-r from-pink-50 to-pink-100/50 dark:from-brand-dark-surface dark:to-brand-dark-card border border-pink-200 dark:border-brand-dark-border">
+            <div className="flex items-center gap-3">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-primary text-white shrink-0 shadow-sm">
+                <Coins className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-gray-900 dark:text-white">
+                  Don&apos;t have a tape measure or ruler?
+                </p>
+                <p className="text-[11px] text-gray-600 dark:text-brand-dark-muted">
+                  Place a Nepali Rs. 1 or Rs. 2 coin on your screen to calibrate and calculate exact millimeters automatically!
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsCoinModalOpen(true)}
+              className="hidden sm:inline-flex items-center gap-1 text-xs font-bold text-brand-primary hover:underline shrink-0 bg-white dark:bg-brand-dark-surface px-3 py-1.5 rounded-xl border border-pink-200 dark:border-brand-dark-border shadow-xs"
+            >
+              <span>Launch Caliper</span>
+              <Sparkles className="w-3 h-3 text-brand-primary" />
+            </button>
           </div>
 
           {/* Visual 5-finger input grid */}
@@ -292,10 +344,27 @@ export function Step3Sizing({
         </div>
       )}
 
-      {/* Pop up modal */}
+      {/* Tape & Ruler Pop up modal */}
       <HowToMeasureModal
         isOpen={isMeasureModalOpen}
         onClose={() => setIsMeasureModalOpen(false)}
+      />
+
+      {/* Coin Sizing Helper Modal */}
+      <CoinSizingHelperModal
+        isOpen={isCoinModalOpen}
+        onClose={() => setIsCoinModalOpen(false)}
+        initialMeasurements={measurements}
+        onApplyMeasurements={(newMeasurements) => {
+          onMeasurementsChange(newMeasurements);
+          onSizingTypeChange("custom");
+          if (saveToProfile) {
+            saveMeasurementsLocally({
+              type: "custom",
+              measurements: newMeasurements,
+            });
+          }
+        }}
       />
     </div>
   );

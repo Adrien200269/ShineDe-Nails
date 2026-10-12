@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Sparkles,
@@ -63,6 +64,22 @@ export function OrderWizard() {
   const [customerEmail, setCustomerEmail] = React.useState<string>("");
   const [customerPhone, setCustomerPhone] = React.useState<string>("");
 
+  const searchParams = useSearchParams();
+
+  // Pre-fill specs from Quiz if available
+  React.useEffect(() => {
+    if (!searchParams) return;
+    const shapeParam = searchParams.get("shape")?.toLowerCase();
+    const lengthParam = searchParams.get("length")?.toLowerCase();
+
+    if (shapeParam && ["almond", "coffin", "square", "stiletto", "oval"].includes(shapeParam)) {
+      setShape(shapeParam as NailShape);
+    }
+    if (lengthParam && ["short", "medium", "long", "extra_long"].includes(lengthParam)) {
+      setLength(lengthParam as NailLength);
+    }
+  }, [searchParams]);
+
   // UI state
   const [stepErrors, setStepErrors] = React.useState<{
     image?: string;
@@ -124,7 +141,7 @@ export function OrderWizard() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleSubmitOrder = async () => {
+  const handleSubmitOrder = async (discountedPrice?: number, promoCodeUsed?: string) => {
     if (!validateStep(4)) {
       setCurrentStep(4);
       return;
@@ -132,6 +149,12 @@ export function OrderWizard() {
 
     try {
       setIsSubmitting(true);
+      const orderNotes = promoCodeUsed
+        ? notes
+          ? `${notes} [Promo Code Applied: ${promoCodeUsed}]`
+          : `[Promo Code Applied: ${promoCodeUsed}]`
+        : notes;
+
       const newOrder = await submitCustomOrder({
         order_number: generateOrderNumber(),
         customer_name: customerName,
@@ -146,9 +169,9 @@ export function OrderWizard() {
           sizingType === "standard"
             ? { type: "standard", standardSize }
             : { type: "custom", measurements },
-        notes,
+        notes: orderNotes,
         status: "Pending",
-        total_price: calculateTotal,
+        total_price: discountedPrice ?? calculateTotal,
         payment_status: "paid", // Mock payment processed
       });
 
@@ -273,6 +296,7 @@ export function OrderWizard() {
               <Step1Upload
                 imageUrl={imageUrl}
                 onImageChange={setImageUrl}
+                onSuggestedFinishChange={setFinish}
                 error={stepErrors.image}
               />
             )}
@@ -391,7 +415,7 @@ export function OrderWizard() {
         ) : (
           <Button
             type="button"
-            onClick={handleSubmitOrder}
+            onClick={() => handleSubmitOrder()}
             isLoading={isSubmitting}
             className="flex-1 h-12 text-sm justify-center gap-2 shadow-pink-md"
           >

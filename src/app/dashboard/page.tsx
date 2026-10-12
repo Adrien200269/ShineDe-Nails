@@ -25,7 +25,8 @@ import {
   getSavedMeasurements,
   saveMeasurementsLocally,
 } from "@/lib/orders";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, createWhatsAppOrderLink } from "@/lib/utils";
+import { WhatsAppIcon } from "@/components/ui/icons";
 import { HowToMeasureModal } from "@/components/custom-order/HowToMeasureModal";
 import { NailConsultationChat } from "@/components/chat/NailConsultationChat";
 import { useAuth } from "@/lib/supabase/auth-context";
@@ -345,15 +346,38 @@ export default function DashboardPage() {
                       </span>
                     </div>
 
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setChatOrder(order)}
-                      className="mt-2 text-xs gap-1.5 border-pink-200 hover:border-brand-primary text-brand-primary w-full sm:w-auto"
-                    >
-                      <MessageCircle className="w-3.5 h-3.5" />
-                      <span>Chat with Nail Artist</span>
-                    </Button>
+                    <div className="flex items-center gap-2 mt-2 w-full sm:w-auto flex-wrap">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setChatOrder(order)}
+                        className="text-xs gap-1.5 border-pink-200 hover:border-brand-primary text-brand-primary flex-1 sm:flex-initial"
+                      >
+                        <MessageCircle className="w-3.5 h-3.5" />
+                        <span>Chat</span>
+                      </Button>
+
+                      <a
+                        href={createWhatsAppOrderLink({
+                          orderNumber: order.order_number,
+                          shape: order.shape,
+                          length: order.length,
+                          finish: order.finish,
+                          sizingType: order.sizing_type,
+                          standardSize: order.size_data?.standardSize,
+                          measurements: order.size_data?.measurements,
+                          imageUrl: order.image_url,
+                          totalPrice: Number(order.total_price),
+                          customerName: order.customer_name,
+                        })}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 text-xs font-bold transition-all flex-1 sm:flex-initial"
+                      >
+                        <WhatsAppIcon className="w-3.5 h-3.5 fill-current" />
+                        <span>WhatsApp Specs</span>
+                      </a>
+                    </div>
                   </div>
                 </div>
               ))

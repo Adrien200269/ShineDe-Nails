@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { Suspense } from "react";
 import { OrderWizard } from "@/components/custom-order/OrderWizard";
 
 export const metadata: Metadata = {
@@ -20,7 +21,9 @@ export default function CustomOrderPage() {
         />
       </div>
 
-      <OrderWizard />
+      <Suspense fallback={<div className="min-h-[500px] flex items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-brand-primary border-t-transparent" /></div>}>
+        <OrderWizard />
+      </Suspense>
     </div>
   );
 }

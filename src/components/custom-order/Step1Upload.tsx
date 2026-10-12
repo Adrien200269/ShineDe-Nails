@@ -3,14 +3,22 @@
 import * as React from "react";
 import { UploadCloud, Image as ImageIcon, Sparkles, X, Check, Camera } from "lucide-react";
 import { uploadInspirationImage } from "@/lib/orders";
+import { AIInspoPaletteExtractor } from "./AIInspoPaletteExtractor";
+import { NailFinish } from "@/types";
 
 interface Step1UploadProps {
   imageUrl: string;
   onImageChange: (url: string) => void;
+  onSuggestedFinishChange?: (finish: NailFinish) => void;
   error?: string;
 }
 
-export function Step1Upload({ imageUrl, onImageChange, error }: Step1UploadProps) {
+export function Step1Upload({
+  imageUrl,
+  onImageChange,
+  onSuggestedFinishChange,
+  error,
+}: Step1UploadProps) {
   const [isUploading, setIsUploading] = React.useState(false);
   const [dragActive, setDragActive] = React.useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
@@ -122,6 +130,14 @@ export function Step1Upload({ imageUrl, onImageChange, error }: Step1UploadProps
             >
               Upload another photo
             </button>
+          </div>
+
+          {/* AI Color Palette & Style Extractor */}
+          <div className="mt-4">
+            <AIInspoPaletteExtractor
+              imageUrl={imageUrl}
+              onApplySuggestedFinish={onSuggestedFinishChange}
+            />
           </div>
         </div>
       ) : (

@@ -8,6 +8,7 @@ import {
   ShieldAlert,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { CoinMeasureTriggerButton } from "@/components/custom-order/CoinMeasureTriggerButton";
 
 export const metadata: Metadata = {
   title: "Nail Sizing & Measurement Guide | ShineDe Nails",
@@ -69,6 +70,9 @@ export default function HowToMeasurePage() {
             </p>
           </div>
         </div>
+
+        {/* Feature: On-Screen Coin & Caliper Sizing Tool */}
+        <CoinMeasureTriggerButton />
 
         {/* Size Chart Reference */}
         <div className="rounded-3xl border border-pink-200 dark:border-brand-dark-border bg-white dark:bg-brand-dark-card p-6 sm:p-8 shadow-card">

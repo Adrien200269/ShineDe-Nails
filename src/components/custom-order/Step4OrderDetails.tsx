@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { NailFinish } from "@/types";
 import { cn } from "@/lib/utils";
+import { MixAndMatchStudio } from "./MixAndMatchStudio";
 
 interface Step4OrderDetailsProps {
   finish: NailFinish;
@@ -104,6 +105,21 @@ export function Step4OrderDetails({
           })}
         </div>
       </div>
+
+      {/* Interactive Mix & Match Accent Studio */}
+      <MixAndMatchStudio
+        onAutoSelectMixedFinish={() => {
+          if (finish !== "mixed") {
+            onFinishChange("mixed");
+          }
+        }}
+        onSyncToNotes={(accentSummary) => {
+          // Remove previous [Custom Finger Accents: ...] tag if present and replace with fresh one
+          const cleanNotes = notes.replace(/\[Custom Finger Accents: [^\]]+\]\s*/g, "").trim();
+          const combined = cleanNotes ? `${accentSummary}\n${cleanNotes}` : accentSummary;
+          onNotesChange(combined);
+        }}
+      />
 
       {/* Custom Notes */}
       <div className="space-y-1.5">
