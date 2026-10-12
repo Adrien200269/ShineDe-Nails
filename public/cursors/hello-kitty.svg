@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+  <!-- Precision pointer arrow in brand pink with white outline -->
+  <g filter="drop-shadow(0px 1px 2px rgba(0,0,0,0.25))">
+    <!-- Arrow Body -->
+    <path d="M1 1L1 17L5 13L9 20L12 18.5L8 11.5L14 11.5L1 1Z" fill="#E93F66" stroke="#FFFFFF" stroke-width="1.5" stroke-linejoin="round"/>
+  </g>
+
+  <!-- Hello Kitty Charm attached to cursor -->
+  <g transform="translate(10, 8)">
+    <!-- Ears -->
+    <!-- Left ear -->
+    <path d="M4 6C3 3 5 0.5 7 1C8.5 1.5 9 4 9 5" fill="#FFFFFF" stroke="#222222" stroke-width="1.2" stroke-linejoin="round"/>
+    <!-- Right ear -->
+    <path d="M13 5C13 4 13.5 1.5 15 1C17 0.5 19 3 18 6" fill="#FFFFFF" stroke="#222222" stroke-width="1.2" stroke-linejoin="round"/>
+
+    <!-- Head -->
+    <ellipse cx="11" cy="9.5" rx="9" ry="7.5" fill="#FFFFFF" stroke="#222222" stroke-width="1.2"/>
+
+    <!-- Iconic Bow on Left Ear -->
+    <!-- Left loop -->
+    <ellipse cx="4.5" cy="2.5" rx="2.5" ry="2" fill="#FF3366" stroke="#222222" stroke-width="0.9" transform="rotate(-20 4.5 2.5)"/>
+    <!-- Right loop -->
+    <ellipse cx="9" cy="3.5" rx="2.5" ry="2" fill="#FF3366" stroke="#222222" stroke-width="0.9" transform="rotate(20 9 3.5)"/>
+    <!-- Center knot -->
+    <circle cx="6.8" cy="3.2" r="1.5" fill="#FF1A53" stroke="#222222" stroke-width="0.9"/>
+    <circle cx="6.4" cy="2.8" r="0.5" fill="#FFFFFF"/>
+
+    <!-- Eyes -->
+    <ellipse cx="7.5" cy="9.5" rx="1" ry="1.4" fill="#222222"/>
+    <ellipse cx="14.5" cy="9.5" rx="1" ry="1.4" fill="#222222"/>
+
+    <!-- Nose -->
+    <ellipse cx="11" cy="11.2" rx="1.2" ry="0.9" fill="#FFD13B" stroke="#222222" stroke-width="0.5"/>
+
+    <!-- Whiskers Left -->
+    <line x1="1.5" y1="8.5" x2="4.5" y2="9.2" stroke="#222222" stroke-width="0.9" stroke-linecap="round"/>
+    <line x1="1.2" y1="10.5" x2="4.2" y2="10.5" stroke="#222222" stroke-width="0.9" stroke-linecap="round"/>
+    <line x1="1.8" y1="12.5" x2="4.8" y2="11.8" stroke="#222222" stroke-width="0.9" stroke-linecap="round"/>
+
+    <!-- Whiskers Right -->
+    <line x1="17.5" y1="9.2" x2="20.5" y2="8.5" stroke="#222222" stroke-width="0.9" stroke-linecap="round"/>
+    <line x1="17.8" y1="10.5" x2="20.8" y2="10.5" stroke="#222222" stroke-width="0.9" stroke-linecap="round"/>
+    <line x1="17.2" y1="11.8" x2="20.2" y2="12.5" stroke="#222222" stroke-width="0.9" stroke-linecap="round"/>
+
+    <!-- Cheeks (cute blush) -->
+    <circle cx="5" cy="11.5" r="1.2" fill="#FFB6C1" opacity="0.8"/>
+    <circle cx="17" cy="11.5" r="1.2" fill="#FFB6C1" opacity="0.8"/>
+  </g>
+</svg>

@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+  <!-- Glowing Pointer Sparkle / Heart tip pointing at 2, 2 -->
+  <g filter="drop-shadow(0px 1px 2px rgba(233,63,102,0.4))">
+    <!-- Mini magic pointer wand / finger -->
+    <path d="M4 1C4 1 6 3 6 7L6 11L4 13L2 11L2 3C2 1.5 3 1 4 1Z" fill="#FFFFFF" stroke="#E93F66" stroke-width="1.2"/>
+    <!-- Sparkling star at tip (2, 2) -->
+    <path d="M4 0L4.8 2.2L7 3L4.8 3.8L4 6L3.2 3.8L1 3L3.2 2.2L4 0Z" fill="#FF2E63"/>
+  </g>
+
+  <!-- Hello Kitty with Heart & Bow -->
+  <g transform="translate(9, 6)">
+    <!-- Ears -->
+    <path d="M4 6C3 3 5 0.5 7 1C8.5 1.5 9 4 9 5" fill="#FFFFFF" stroke="#222222" stroke-width="1.2" stroke-linejoin="round"/>
+    <path d="M13 5C13 4 13.5 1.5 15 1C17 0.5 19 3 18 6" fill="#FFFFFF" stroke="#222222" stroke-width="1.2" stroke-linejoin="round"/>
+
+    <!-- Head -->
+    <ellipse cx="11" cy="9.5" rx="9" ry="7.5" fill="#FFFFFF" stroke="#222222" stroke-width="1.2"/>
+
+    <!-- Sparkly Red/Pink Bow -->
+    <ellipse cx="4.5" cy="2.5" rx="2.5" ry="2" fill="#E93F66" stroke="#222222" stroke-width="0.9" transform="rotate(-20 4.5 2.5)"/>
+    <ellipse cx="9" cy="3.5" rx="2.5" ry="2" fill="#E93F66" stroke="#222222" stroke-width="0.9" transform="rotate(20 9 3.5)"/>
+    <circle cx="6.8" cy="3.2" r="1.5" fill="#C81E48" stroke="#222222" stroke-width="0.9"/>
+    <circle cx="6.4" cy="2.8" r="0.5" fill="#FFFFFF"/>
+
+    <!-- Eyes (Winking cute expression for hover!) -->
+    <!-- Left eye winking curve -->
+    <path d="M6.2 10.2C6.8 9 8.2 9 8.8 10.2" stroke="#222222" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+    <!-- Right eye open -->
+    <ellipse cx="14.5" cy="9.5" rx="1" ry="1.4" fill="#222222"/>
+
+    <!-- Nose -->
+    <ellipse cx="11" cy="11.2" rx="1.2" ry="0.9" fill="#FFD13B" stroke="#222222" stroke-width="0.5"/>
+
+    <!-- Whiskers Left -->
+    <line x1="1.5" y1="8.5" x2="4.5" y2="9.2" stroke="#222222" stroke-width="0.9" stroke-linecap="round"/>
+    <line x1="1.2" y1="10.5" x2="4.2" y2="10.5" stroke="#222222" stroke-width="0.9" stroke-linecap="round"/>
+    <line x1="1.8" y1="12.5" x2="4.8" y2="11.8" stroke="#222222" stroke-width="0.9" stroke-linecap="round"/>
+
+    <!-- Whiskers Right -->
+    <line x1="17.5" y1="9.2" x2="20.5" y2="8.5" stroke="#222222" stroke-width="0.9" stroke-linecap="round"/>
+    <line x1="17.8" y1="10.5" x2="20.8" y2="10.5" stroke="#222222" stroke-width="0.9" stroke-linecap="round"/>
+    <line x1="17.2" y1="11.8" x2="20.2" y2="12.5" stroke="#222222" stroke-width="0.9" stroke-linecap="round"/>
+
+    <!-- Pink Cheeks -->
+    <circle cx="5" cy="11.5" r="1.3" fill="#FF8DA1" opacity="0.85"/>
+    <circle cx="17" cy="11.5" r="1.3" fill="#FF8DA1" opacity="0.85"/>
+
+    <!-- Little Heart Accent -->
+    <path d="M19 1L19.8 2.2C20.6 1.4 21.6 2.2 21.2 3.2L19 5.5L16.8 3.2C16.4 2.2 17.4 1.4 18.2 2.2L19 1Z" fill="#FF3366"/>
+  </g>
+</svg>

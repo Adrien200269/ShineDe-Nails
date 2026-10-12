@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Profile {
+  id                String        @id @default(uuid())
+  email             String        @unique
+  fullName          String?       @map("full_name")
+  phone             String?
+  savedMeasurements Json?         @map("saved_measurements")
+  customOrders      CustomOrder[]
+  createdAt         DateTime      @default(now()) @map("created_at")
+  updatedAt         DateTime      @updatedAt @map("updated_at")
+
+  @@map("profiles")
+}
+
+model CustomOrder {
+  id            String    @id @default(uuid())
+  orderNumber   String    @unique @map("order_number")
+  userId        String?   @map("user_id")
+  user          Profile?  @relation(fields: [userId], references: [id], onDelete: SetNull)
+  customerName  String    @map("customer_name")
+  customerEmail String    @map("customer_email")
+  customerPhone String?   @map("customer_phone")
+  imageUrl      String    @map("image_url")
+  shape         String
+  length        String
+  finish        String    @default("glossy")
+  sizingType    String    @map("sizing_type")
+  sizeData      Json      @map("size_data")
+  notes         String?
+  status        String    @default("Pending")
+  totalPrice    Decimal   @default(45.00) @map("total_price") @db.Decimal(10, 2)
+  paymentStatus String    @default("unpaid") @map("payment_status")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  @@map("custom_orders")
+}

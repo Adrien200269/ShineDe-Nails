@@ -1,0 +1,145 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #FDF1F8;
+  --foreground: #1F2937;
+  --primary: #E93F66;
+  --primary-hover: #D32F55;
+  --primary-subtle: #FFF5F8;
+}
+
+.dark {
+  --background: #120A10;
+  --foreground: #FDF2F7;
+  --primary: #FF537A;
+  --primary-hover: #E93F66;
+  --primary-subtle: #20101C;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background-color: var(--background);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Custom scrollbar for aesthetic feel */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+::-webkit-scrollbar-thumb {
+  background: #F9A8D4;
+  border-radius: 9999px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #612749;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #E93F66;
+}
+
+/* Glassmorphism & custom utility classes */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(233, 63, 102, 0.15);
+}
+
+.dark .glass-panel {
+  background: rgba(29, 17, 26, 0.88);
+  border: 1px solid rgba(233, 63, 102, 0.25);
+}
+
+.gradient-brand-text {
+  background: linear-gradient(135deg, #E93F66 0%, #B8234B 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.dark .gradient-brand-text {
+  background: linear-gradient(135deg, #FF6B8B 0%, #E93F66 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtle-sparkle-bg {
+  background-image: radial-gradient(rgba(233, 63, 102, 0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.dark .subtle-sparkle-bg {
+  background-image: radial-gradient(rgba(233, 63, 102, 0.18) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Hello Kitty Custom Cursors (Desktop & Fine Pointers) */
+@media (pointer: fine) {
+  html,
+  body,
+  *,
+  *::before,
+  *::after {
+    cursor: url('/cursors/hello-kitty.svg') 1 1, auto;
+  }
+
+  a,
+  button,
+  [role="button"],
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  select,
+  summary,
+  .cursor-pointer,
+  [role="tab"] {
+    cursor: url('/cursors/hello-kitty-pointer.svg') 4 2, pointer !important;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="tel"],
+  textarea {
+    cursor: text !important;
+  }
+}
+
+/* Hello Kitty Sparkle Trail Animation */
+@keyframes cursor-fade {
+  0% {
+    opacity: 1;
+    transform: scale(0.6);
+  }
+  40% {
+    opacity: 0.95;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.2) translateY(8px);
+  }
+}
+
+.animate-cursor-fade {
+  animation: cursor-fade 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

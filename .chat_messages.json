@@ -1,0 +1,44 @@
+[
+  {
+    "id": "msg-demo-1",
+    "orderId": "SDN-8492-PINK",
+    "orderNumber": "SDN-8492-PINK",
+    "customerEmail": "aastha@example.com",
+    "customerName": "Aastha Sharma",
+    "senderRole": "customer",
+    "senderName": "Aastha",
+    "message": "Hi! Can you make the ring finger extra glossy with the gold foil line art?",
+    "createdAt": "2026-10-11T11:44:43.409Z"
+  },
+  {
+    "id": "msg-demo-2",
+    "orderId": "SDN-8492-PINK",
+    "orderNumber": "SDN-8492-PINK",
+    "customerEmail": "aastha@example.com",
+    "customerName": "Aastha Sharma",
+    "senderRole": "admin",
+    "senderName": "ShineDe Artist (Sabja)",
+    "message": "Hello Aastha! Absolutely 💕 We'll use our high-shine diamond top coat for the ring finger. Your 16mm thumb sizing is noted!",
+    "createdAt": "2026-10-11T12:44:43.409Z"
+  },
+  {
+    "orderId": "7802b46f-d452-4042-8221-4cd04b5ef062",
+    "orderNumber": "SDN-TEST-1001",
+    "customerEmail": "hailey@example.com",
+    "customerName": "Hailey Bieber",
+    "senderRole": "admin",
+    "senderName": "ShineDe Nail Artist",
+    "message": "Your custom set is currently being sculpted with salon gel! 💅",
+    "id": "msg_1791737093057_he259",
+    "createdAt": "2026-10-11T16:44:53.057Z"
+  },
+  {
+    "orderId": "SDN-8492-PINK",
+    "orderNumber": "SDN-8492-PINK",
+    "senderRole": "customer",
+    "senderName": "Aastha",
+    "message": "Hello! I also want 3D pearl drops if possible 💕",
+    "id": "msg_1791737106891_46a86",
+    "createdAt": "2026-10-11T16:45:06.891Z"
+  }
+]
