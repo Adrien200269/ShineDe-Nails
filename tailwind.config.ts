@@ -37,6 +37,9 @@ const config: Config = {
       fontFamily: {
         serif: ["var(--font-serif)", "Playfair Display", "Georgia", "serif"],
         sans: ["var(--font-sans)", "Plus Jakarta Sans", "Inter", "sans-serif"],
+        handwriting: ["Caveat", "Gochi Hand", "cursive"],
+        journal: ["Gochi Hand", "Schoolbell", "Caveat", "cursive"],
+        schoolbell: ["Schoolbell", "cursive"],
       },
       boxShadow: {
         "pink-sm": "0 2px 8px -1px rgba(233, 63, 102, 0.12)",

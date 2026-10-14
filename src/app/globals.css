@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Gochi+Hand&family=Schoolbell&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -142,4 +144,38 @@ body {
 
 .animate-cursor-fade {
   animation: cursor-fade 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Notebook Aesthetic Styles */
+.font-handwriting {
+  font-family: 'Caveat', 'Gochi Hand', cursive;
+}
+
+.font-journal {
+  font-family: 'Gochi Hand', 'Schoolbell', 'Caveat', cursive;
+}
+
+.font-schoolbell {
+  font-family: 'Schoolbell', cursive;
+}
+
+/* Notebook paper texture & grid styling */
+.notebook-grid-pattern {
+  background-image: 
+    linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.dark .notebook-grid-pattern {
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.notebook-lined-pattern {
+  background-image: linear-gradient(to bottom, transparent 95%, rgba(233, 63, 102, 0.12) 96%, transparent 100%);
+  background-size: 100% 28px;
+  line-height: 28px;
 }

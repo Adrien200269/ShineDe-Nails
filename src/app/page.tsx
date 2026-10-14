@@ -18,6 +18,7 @@ import {
 import { InstagramIcon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { NailfieReviewWall } from "@/components/home/NailfieReviewWall";
+import { NailJournalNotebook } from "@/components/home/NailJournalNotebook";
 import { NailDesign, fetchNailDesigns } from "@/lib/nail-designs";
 
 export default function HomePage() {
@@ -363,7 +364,10 @@ export default function HomePage() {
       {/* 4. Community Nailfies & 5-Star Reviews Wall */}
       <NailfieReviewWall />
 
-      {/* 5. Instagram Feed & Community Banner with Scroll Zoom */}
+      {/* 5. The Nail Artist's Interactive Notebook Diary (taliahhh.com inspired) */}
+      <NailJournalNotebook />
+
+      {/* 6. Instagram Feed & Community Banner with Scroll Zoom */}
       <section className="py-12 bg-gradient-to-r from-pink-100/60 via-pink-50 to-pink-100/60 dark:from-brand-dark-card dark:via-brand-dark-surface dark:to-brand-dark-card border-t border-pink-200 dark:border-brand-dark-border transition-colors relative">
         <motion.div
           initial={{ opacity: 0, scale: 0.96, y: 20 }}
